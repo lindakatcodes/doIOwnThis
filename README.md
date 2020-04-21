@@ -1,4 +1,6 @@
-# diot-project
+# Do I Own This? 
+
+Just an initial setup for a Vue project so far. Will update this once I start building!
 
 ## Project setup
 ```
