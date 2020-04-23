@@ -1,32 +1,44 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+	<div id="app">
+		<header class="header">
+			<h1>Do I Own This?</h1>
+			<menubar />
+		</header>
+
+		<filterbar />
+		<main class="swatches">
+			<div v-for="swatch in swatches" :key="swatch.id">
+				<img :src="swatch.img" />
+			</div>
+		</main>
+	</div>
 </template>
 
+<script>
+export default {}
+</script>
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+:root {
+	--blue: #020258;
+	--white: #faf9f9;
+	--dark-gray: #303030;
 }
 
-#nav {
-  padding: 30px;
+html,
+body {
+	margin: 0;
+	padding: 0;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+body {
+	background: var(--dark-gray);
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+.header {
+	width: 100%;
+	text-align: center;
+	background-color: var(--blue);
+	color: var(--white);
+	padding: 0.5px;
 }
 </style>

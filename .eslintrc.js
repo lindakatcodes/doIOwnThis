@@ -36,7 +36,15 @@ module.exports = {
       {
         'duplicate-attribute': true
       }
-    ]
+    ],
+    'no-extra-semi': 'off',
+    'no-tabs': [
+      'error',
+      {
+        allowIndentationTabs: true
+      }
+    ],
+    'linebreak-style': ['error', 'windows']
   },
   overrides: [
     {
