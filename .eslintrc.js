@@ -38,6 +38,7 @@ module.exports = {
       }
     ],
     'no-extra-semi': 'off',
+    'space-before-function-paren': ['error', 'never'],
     'no-tabs': [
       'error',
       {
