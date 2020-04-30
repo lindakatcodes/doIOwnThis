@@ -2,7 +2,6 @@
   <div id="app">
     <header class="header">
       <h1>Do I Own This?</h1>
-      <!-- <menubar /> -->
     </header>
 
     <main class="swatches">
@@ -47,5 +46,9 @@ body {
   background-color: var(--blue);
   color: var(--white);
   padding: 0.5px;
+}
+
+h1 {
+  font-size: 3rem;
 }
 </style>

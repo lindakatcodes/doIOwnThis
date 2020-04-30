@@ -7,13 +7,19 @@ db.version(1).stores({
   nailpolish: '++id, name, brand, colorgroup'
 })
 
+db.version(2).stores({
+  nailpolish: null,
+  collectionItems: '++id, name, brand, color-group, category'
+})
+
 async function test() {
-  const id = await db.nailpolish.put({
+  const id = await db.collectionItems.put({
     name: 'royal red',
     brand: 'Sally Hanson',
-    colorgroup: 'red',
-    subbrand: 'InstaDri',
-    img: ''
+    'color-group': 'red',
+    'sub-brand': 'InstaDri',
+    img: '',
+    category: 'nail-polish'
   })
   console.log('ID placed! ' + id)
 }
