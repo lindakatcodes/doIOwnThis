@@ -1,11 +1,12 @@
 <template>
   <div class="container">
-    <router-link class="add" :to="{ name: 'add-new' }">+ Add New Item</router-link>
-    <span>|</span>
     <form class="search-form">
       <label for="category-select" class="form-label">Filter By: </label>
       <select name="category-select" class="form-select">
-        <option v-for="choice in choices" :key="choice">{{ choice }}</option>
+        <option>Select One:</option>
+      </select>
+      <select name="sub-category-select" class="form-select">
+        <option>Select one:</option>
       </select>
     </form>
   </div>
@@ -13,17 +14,7 @@
 
 <script>
 export default {
-  data() {
-    return {
-      choices: [
-        'Select One:',
-        'category',
-        'brand',
-        'color-group',
-        'name'
-      ]
-    }
-  }
+
 }
 </script>
 
@@ -31,25 +22,20 @@ export default {
 .container {
   width: 100vw;
   padding: 2% 0 2%;
-  background-color: var(--white);
+  background-color: var(--accent);
   display: flex;
   justify-content: space-around;
   align-items: center;
 }
 
-.add {
-  color: var(--blue);
-}
-
 .search-form {
-  width: 50%;
+  width: 100%;
   display: flex;
   align-items: center;
 }
 
 .form-label {
-  color: var(--dark-gray);
-  margin-right: 3%;
+  color: var(--heading-bg);
 }
 
 .form-select {

@@ -1,3 +1,6 @@
+// eslint-disable-next-line no-unused-vars
+// import dotenv from '../../env'
+
 import * as firebase from 'firebase/app'
 import 'firebase/analytics'
 import 'firebase/auth'

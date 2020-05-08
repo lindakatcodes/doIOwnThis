@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header class="header">
-      <h1>Do I Own This?</h1>
+      <headingBar  />
     </header>
 
     <main class="swatches">
@@ -14,10 +14,12 @@
 <script>
 // eslint-disable-next-line no-unused-vars
 import db from '@/services/db.js'
-import FilterBar from '@/components/FilterBar.vue'
+import FilterBar from '@/components/FilterBar'
+import HeadingBar from '@/components/HeadingBar'
 
 export default {
   components: {
+    HeadingBar,
     FilterBar
   }
 }
@@ -25,9 +27,10 @@ export default {
 
 <style>
 :root {
-  --blue: #020258;
-  --white: #faf9f9;
-  --dark-gray: #303030;
+  --heading-bg: #25364f;
+  --font-color: #fafbe4;
+  --body-bg: #9496a5;
+  --accent: #e9b1a8;
 }
 
 html,
@@ -37,18 +40,8 @@ body {
 }
 
 body {
-  background: var(--dark-gray);
+  background: var(--body-bg);
+  color: var(--font-color);
 }
 
-.header {
-  width: 100%;
-  text-align: center;
-  background-color: var(--blue);
-  color: var(--white);
-  padding: 0.5px;
-}
-
-h1 {
-  font-size: 3rem;
-}
 </style>
