@@ -1,12 +1,13 @@
 <template>
   <div class="header">
     <h1 class="title">Do I Own This?</h1>
-    <div v-if="!token" class="signInBlock">
+    <div v-if="!signedIn" class="signInBlock">
       <button @click="login">Sign in w/ Google</button>
     </div>
-    <div v-if="token" class="signInBlock">
-      <p>Hi, {{ user.name }}!</p>
-      <router-link>Got something new? Add it!</router-link>
+    <div v-if="signedIn" class="signInBlock">
+      <p>Hi!</p>
+      <button @click="logout">Sign Out</button>
+      <!-- <router-link>Got something new? Add it!</router-link> -->
     </div>
   </div>
 </template>
@@ -14,37 +15,42 @@
 <script>
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import { mapState } from 'vuex'
 
 export default {
   data() {
     return {
-      token: ''
+      userId: '',
+      name: '',
+      signedIn: false
     }
+  },
+  created() {
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log(user)
+        this.userId = user.uid
+        this.name = user.displayName
+        this.signedIn = true
+      } else {
+        console.log('No user detected.')
+        this.signedIn = false
+      }
+    })
   },
   methods: {
     login() {
       const provider = new firebase.auth.GoogleAuthProvider()
       firebase.auth().signInWithRedirect(provider)
-
-      firebase
-        .auth()
-        .getRedirectResult()
-        .then(function(result) {
-          if (result.credential) {
-            this.token = result.credential.accessToken
-          }
-          this.$store.commit('setCurrentUser', result.user)
-          console.log('Signed in sucessfully! ' + result)
-        })
-        .catch(function(error) {
-          console.error('Error with signing in: ' + error)
-        })
+    },
+    logout() {
+      firebase.auth().signOut().then(function() {
+        console.log('Successfully signed out')
+        this.signedIn = false
+      }).catch(function(error) {
+        console.error('Error signing out', error)
+      })
     }
-  },
-  computed: mapState({
-    user: 'currentUser'
-  })
+  }
 }
 </script>
 
