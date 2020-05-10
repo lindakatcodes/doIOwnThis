@@ -1,24 +1,24 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 // import firebase from '../services/firebaseConfig'
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    currentUser: {}
+    currentUser: {},
   },
   mutations: {
     setCurrentUser(state, val) {
       state.currentUser = {
         userName: val.displayName,
-        userId: val.uid
-      }
+        userId: val.uid,
+      };
     },
     unsetCurrentUser(state) {
-      state.currentUser = {}
-    }
+      state.currentUser = {};
+    },
   },
   actions: {},
-  modules: {}
-})
+  modules: {},
+});
