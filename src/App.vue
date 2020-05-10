@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <header class="header">
-      <headingBar  />
+    <header>
+      <headingBar />
     </header>
 
     <main class="swatches">
@@ -27,10 +27,11 @@ export default {
 
 <style>
 :root {
-  --heading-bg: #25364f;
-  --font-color: #fafbe4;
-  --body-bg: #9496a5;
-  --accent: #e9b1a8;
+  --dark-bg: #1a2536;
+  --light-bg: #9b9da7;
+  --dark-font-color: #1a2536;
+  --light-font-color: #fafbe4;
+  --accent: #e9a8a8;
 }
 
 html,
@@ -40,8 +41,6 @@ body {
 }
 
 body {
-  background: var(--body-bg);
-  color: var(--font-color);
+  background: var(--light-bg);
 }
-
 </style>
