@@ -14,6 +14,9 @@ module.exports = {
     commonjs: true,
     node: true,
   },
+  settings: {
+    'import/resolver': 'webpack',
+  },
   rules: {
     'no-debugger': 0,
     'no-alert': 0,

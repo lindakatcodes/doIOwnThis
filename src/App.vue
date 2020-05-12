@@ -5,7 +5,6 @@
     </header>
 
     <main class="swatches">
-      <FilterBar />
       <router-view :key="$route.fullPath" />
     </main>
   </div>
@@ -14,13 +13,11 @@
 <script>
   // eslint-disable-next-line no-unused-vars
   import db from './services/db.js';
-  import FilterBar from './components/FilterBar.vue';
   import HeadingBar from './components/HeadingBar.vue';
 
   export default {
     components: {
       HeadingBar,
-      FilterBar,
     },
   };
 </script>

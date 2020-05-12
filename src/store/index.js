@@ -7,6 +7,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     currentUser: {},
+    signedIn: false,
   },
   mutations: {
     setCurrentUser(state, val) {
@@ -14,9 +15,11 @@ export default new Vuex.Store({
         userName: val.displayName,
         userId: val.uid,
       };
+      state.signedIn = true;
     },
     unsetCurrentUser(state) {
       state.currentUser = {};
+      state.signedIn = false;
     },
   },
   actions: {},

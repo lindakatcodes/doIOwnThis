@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <FilterBar />
     <div v-if="!signedIn" class="intro">
       <h2>Ready to keep track of your personal items while out and about?</h2>
       <p>
@@ -16,34 +17,23 @@
         Just sign in above, and be on your way to making your life easier!
       </p>
     </div>
-    <!-- <ItemSwatch v-for="swatch in swatches" :key="swatch.id">
-      <figure>
-        <img :src="swatch.img" alt="" />
-        <figcaption>{{ swatch.name }}</figcaption>
-      </figure>
-    </ItemSwatch> -->
+    <div v-else>
+      <router-link :to="{ name: 'add-new' }" class="add-new-link">Got something new? Add it here!</router-link>
+    </div>
   </div>
 </template>
 
 <script>
-  // import ItemSwatch from '@/components/ItemSwatch.vue'
+  import { mapState } from 'vuex';
+  import FilterBar from '../components/FilterBar.vue';
 
   export default {
-    data() {
-      return {
-        signedIn: false,
-      };
+    components: {
+      FilterBar,
     },
-    // components: {
-    //   ItemSwatch
-    // }
-    created() {
-      if (this.$store.state.currentUser.userId) {
-        this.signedIn = true;
-      } else {
-        this.signedIn = false;
-      }
-    },
+    computed: mapState({
+      signedIn: (state) => state.signedIn,
+    }),
   };
 </script>
 
@@ -51,5 +41,14 @@
   .intro {
     margin: 3%;
     color: var(--dark-font-color);
+  }
+
+  .add-new-link {
+    color: var(--dark-font-color);
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 3px;
+    font-weight: 600;
+    margin-left: 15%;
+    margin-top: 5%;
   }
 </style>

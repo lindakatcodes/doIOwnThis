@@ -82,7 +82,7 @@
   }
 
   .title {
-    width: 60%;
+    width: 65%;
     color: var(--light-font-color);
   }
 
