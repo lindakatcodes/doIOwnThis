@@ -1,6 +1,9 @@
 <template>
   <div class="header">
-    <h1 class="title">Do I Own This?</h1>
+    <div class="titleBlock">
+      <h1 class="title">Do I Own This?</h1>
+      <p class="subtitle">View your collection anywhere!</p>
+    </div>
     <div v-if="!signedIn" class="signInBlock">
       <button class="toggleSignIn" type="button" @click="login">
         Sign in w/ Google
@@ -11,14 +14,12 @@
       <button class="toggleSignIn" type="button" @click="logout">
         Sign Out
       </button>
-      <!-- <router-link>Got something new? Add it!</router-link> -->
     </div>
   </div>
 </template>
 
 <script>
-  import firebase from 'firebase/app';
-  import 'firebase/auth';
+  import { auth } from '../../firebaseConfig';
 
   export default {
     data() {
@@ -35,7 +36,7 @@
       },
     },
     created() {
-      firebase.auth().onAuthStateChanged((user) => {
+      auth.onAuthStateChanged((user) => {
         // console.debug('Callback context for created', this)
         if (user) {
           this.userId = user.uid;
@@ -53,12 +54,11 @@
     methods: {
       login() {
         // console.debug('Callback context login', this)
-        const provider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithRedirect(provider);
+        const provider = new auth.GoogleAuthProvider();
+        auth.signInWithRedirect(provider);
       },
       logout() {
-        firebase
-          .auth()
+        auth
           .signOut()
           .then(() => {
             console.log('Successfully signed out');
@@ -75,28 +75,27 @@
 <style scoped>
   .header {
     width: 100%;
-    padding: 2% 0;
+    padding: 1% 0 4%;
     background: var(--dark-bg);
     display: flex;
     justify-content: space-around;
+    align-items: center;
   }
 
-  .title {
+  .titleBlock {
     width: 65%;
     color: var(--light-font-color);
   }
 
-  .signInBlock {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
+  .subtitle {
+    margin-bottom: 5%;
   }
 
   .signInBlock p {
-    padding: 3px;
-    margin: 8px 0;
-    font-size: 1.2rem;
+    margin: 8% 0;
+    font-size: 1.1rem;
     color: var(--accent);
+    text-align: center;
   }
 
   .toggleSignIn {

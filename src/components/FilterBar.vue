@@ -21,6 +21,7 @@
     width: 100%;
     padding: 3% 0;
     background-color: var(--accent);
+    margin-bottom: 3%;
   }
 
   .search-form {

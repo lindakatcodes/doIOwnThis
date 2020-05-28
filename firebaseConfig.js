@@ -1,9 +1,9 @@
 import * as firebase from 'firebase/app';
-import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/storage';
-import 'firebase/performance';
+// import 'firebase/analytics';
+// import 'firebase/performance';
 
 // firebase init goes here
 const config = {
@@ -16,6 +16,11 @@ const config = {
   appId: process.env.VUE_APP_APP_ID,
   measurementId: process.env.VUE_APP_MEASUREMENT_ID,
 };
+
 firebase.initializeApp(config);
+
+export const db = firebase.firestore();
+export const auth = firebase.auth();
+export const storage = firebase.storage();
 
 export default firebase;

@@ -1,0 +1,11 @@
+:root {
+  --dark-bg: #151e2c;
+  --light-bg: #9b9da7;
+  --dark-font-color: #151e2c;
+  --light-font-color: #f8f8f8;
+  --accent: #e9a8a8;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  margin: 3%;
+}
