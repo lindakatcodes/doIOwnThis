@@ -5,23 +5,23 @@
       Woohoo, new stuff! <br />
       Let's add it to your collection!
     </h2>
-    <form class="add-item-form">
+    <form class="add-item-form" enctype="multipart/form-data" method="post" @submit.prevent="addPolish($event.target)">
       <!-- FUTURE IDEA
       Initially show a category only, allow to pick one that already exists, or go to new page to set up a new category
       Then, once category is picked or set up, populate a form with the category's field options -->
       <!-- TODO
       Make a way to batch add items - select which categories are the same, then only fill out the different fields and submit all together? -->
-      <label class="form-label" for="brand" required>Brand name </label>
-      <input id="brand" v-model="newBrand" type="text" placeholder="Sally Hansen, Essie, etc" />
+      <label class="form-label" for="brand">Brand name </label>
+      <input id="brand" v-model.trim="newBrand" type="text" placeholder="Sally Hansen, Essie, etc" required />
 
       <label class="form-label" for="sub-brand">Is there a sub-brand or collection name?</label>
-      <input id="sub-brand" v-model="newSubBrand" type="text" placeholder="Insta-Dri, PixieDust, etc" />
+      <input id="sub-brand" v-model.trim="newSubBrand" type="text" placeholder="Insta-Dri, PixieDust, etc" />
 
       <label class="form-label" for="item-name">Name of color</label>
-      <input id="item-name" v-model="newName" type="text" placeholder="Mint Apple, Apartment for Two, etc" />
+      <input id="item-name" v-model.trim="newName" type="text" placeholder="Mint Apple, Apartment for Two, etc" />
 
-      <label class="form-label" for="color-group" required>What color is it?</label>
-      <select id="color-group" v-model="newColorGroup" name="colorGroup">
+      <label class="form-label" for="color-group">What color is it?</label>
+      <select id="color-group" v-model="newColorGroup" name="colorGroup" required>
         <option value="">Select which option it's closest to:</option>
         <option value="base">Basics (Base/Top Coat, Strengthener)</option>
         <option value="blue">Blue</option>
@@ -37,19 +37,21 @@
         <option value="yellow">Yellow</option>
       </select>
 
-      <label class="form-label" for="style" required>What kind of finish does it have?</label>
-      <input id="style" v-model="newFinish" type="text" placeholder="Matte, Gloss, Gel, Texture" />
+      <label class="form-label" for="style">What kind of finish does it have?</label>
+      <input id="style" v-model.trim="newFinish" type="text" placeholder="Matte, Gloss, Gel, Texture" required />
 
-      <label class="form-label" for="pic" required>Pick a picture to show the color</label>
-      <input id="pic" type="file" accept=".jpg, .png, .jpeg" />
+      <label class="form-label" for="pic">Pick a picture to show the color</label>
+      <input id="pic" ref="newImage" type="file" accept=".jpg, .png, .jpeg" required />
       <!-- ToDo - on submit, redirect to home page w/ success message on success; show errors and stay on page if errors -->
-      <button class="add-item-button" @click="addPolish">Add Item</button>
+      <button class="add-item-button" type="submit">Add Item</button>
     </form>
   </div>
 </template>
 
 <script>
   import { db, auth, storage } from '../../firebaseConfig';
+
+  const collection = db.collection('polishes');
 
   export default {
     data() {
@@ -62,29 +64,51 @@
         newImage: '',
       };
     },
-    firestore() {
-      return {
-        polishes: {
-          ref: db.collection('polishes'),
-          resolve: (data) => {
-            console.log('Data successfully added! ', data);
-          },
-          reject: (data) => {
-            console.error('Problem with your data: ', data);
-          },
-        },
-      };
-    },
+    // firestore() {
+    //   return {
+    //     polishes: {
+    //       ref: db.collection('polishes'),
+    //       resolve: (data) => {
+    //         console.log('Data successfully added! ', data);
+    //       },
+    //       reject: (data) => {
+    //         console.error('Problem with your data: ', data);
+    //       },
+    //     },
+    //   };
+    // },
     methods: {
-      addPolish() {
-        this.$firestore.polishes.add({
-          brand: this.newBrand,
-          subbrand: this.newSubBrand,
-          name: this.newName,
-          colorgroup: this.newColorGroup,
-          finish: this.newFinish,
-          image: this.newImage,
-        });
+      addPolish(formData) {
+        const file = formData[5].files[0];
+
+        collection
+          .add({
+            brand: this.newBrand,
+            subBrand: this.newSubBrand,
+            name: this.newName,
+            colorGroup: this.newColorGroup,
+            finish: this.newFinish,
+          })
+          // .then(function (itemRef) {
+          //   const filePath = `${auth.currentUser.uid}/${file.name}`;
+          //   return storage
+          //     .ref(filePath)
+          //     .put(file)
+          //     .then(function (fileSnapshot) {
+          //       return fileSnapshot.ref.getDownloadURL().then((url) => {
+          //         itemRef.update({
+          //           image: url,
+          //           storageUri: fileSnapshot.metadata.fullPath,
+          //         });
+          //       });
+          //     });
+          // })
+          .then(() => {
+            console.log('Item successfully added to your collection!');
+          })
+          .catch(function (error) {
+            console.error('Problem adding your data: ', error);
+          });
       },
     },
   };

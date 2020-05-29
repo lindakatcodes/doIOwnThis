@@ -17,10 +17,10 @@ const config = {
   measurementId: process.env.VUE_APP_MEASUREMENT_ID,
 };
 
-firebase.initializeApp(config);
+export const firebaseApp = firebase.initializeApp(config);
 
-export const db = firebase.firestore();
-export const auth = firebase.auth();
-export const storage = firebase.storage();
+export const db = firebaseApp.firestore();
+export const auth = firebaseApp.auth();
+export const storage = firebaseApp.storage();
 
-export default firebase;
+// export default firebaseApp;

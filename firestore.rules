@@ -1,8 +1,7 @@
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /allItems/{item} {
-      allow read, update, delete: if request.resource.data.name == request.auth.token.name;
-      allow create: if request.auth.uid != null;
+    match /some_collection/{userId}/{documents=**} {
+      allow read, write: if request.auth.uid == userId
     }
   }
 }

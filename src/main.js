@@ -1,10 +1,10 @@
 // Firebase
 // eslint-disable-next-line
-import * as firebase from '../firebaseConfig'
-import VueFirestore from 'vue-firestore';
+import Vue from 'vue';
+import * as firebaseApp from '../firebaseConfig';
+// import VueFirestore from 'vue-firestore';
 
 // Vue & main files
-import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -16,7 +16,7 @@ import './assets/global.css';
 
 Vue.config.productionTip = false;
 
-Vue.use(VueFirestore);
+// Vue.use(VueFirestore);
 
 new Vue({
   router,
