@@ -38,7 +38,7 @@
       </select>
 
       <label class="form-label" for="style">What kind of finish does it have?</label>
-      <input id="style" v-model.trim="newFinish" type="text" placeholder="Matte, Gloss, Gel, Texture" required />
+      <input id="style" v-model.trim="newFinish" type="text" placeholder="Matte, Gloss, Gel, Texture" />
 
       <label class="form-label" for="pic">Pick a picture to show the color</label>
       <input id="pic" ref="newImage" type="file" accept=".jpg, .png, .jpeg" required />
@@ -51,7 +51,7 @@
 <script>
   import { db, auth, storage } from '../../firebaseConfig';
 
-  const collection = db.collection('polishes');
+  const polishes = db.collection('nailPolish');
 
   export default {
     data() {
@@ -64,47 +64,39 @@
         newImage: '',
       };
     },
-    // firestore() {
-    //   return {
-    //     polishes: {
-    //       ref: db.collection('polishes'),
-    //       resolve: (data) => {
-    //         console.log('Data successfully added! ', data);
-    //       },
-    //       reject: (data) => {
-    //         console.error('Problem with your data: ', data);
-    //       },
-    //     },
-    //   };
-    // },
     methods: {
       addPolish(formData) {
         const file = formData[5].files[0];
 
-        collection
+        polishes
           .add({
             brand: this.newBrand,
             subBrand: this.newSubBrand,
             name: this.newName,
             colorGroup: this.newColorGroup,
             finish: this.newFinish,
+            created: new Date(),
+            addedBy: auth.currentUser.uid,
           })
-          // .then(function (itemRef) {
-          //   const filePath = `${auth.currentUser.uid}/${file.name}`;
-          //   return storage
-          //     .ref(filePath)
-          //     .put(file)
-          //     .then(function (fileSnapshot) {
-          //       return fileSnapshot.ref.getDownloadURL().then((url) => {
-          //         itemRef.update({
-          //           image: url,
-          //           storageUri: fileSnapshot.metadata.fullPath,
-          //         });
-          //       });
-          //     });
-          // })
+          .then(function (itemRef) {
+            const filePath = `${auth.currentUser.uid}/${file.name}`;
+            return storage
+              .ref(filePath)
+              .put(file)
+              .then(function (fileSnapshot) {
+                return fileSnapshot.ref.getDownloadURL().then((url) => {
+                  itemRef.update({
+                    image: url,
+                    storageUri: fileSnapshot.metadata.fullPath,
+                  });
+                });
+              });
+          })
           .then(() => {
             console.log('Item successfully added to your collection!');
+            this.$router.push({
+              name: 'Home',
+            });
           })
           .catch(function (error) {
             console.error('Problem adding your data: ', error);

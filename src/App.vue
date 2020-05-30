@@ -11,8 +11,6 @@
 </template>
 
 <script>
-  // eslint-disable-next-line no-unused-vars
-  import db from './services/db.js';
   import HeadingBar from './components/HeadingBar.vue';
 
   export default {

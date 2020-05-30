@@ -1,7 +1,7 @@
 <template>
-  <div class="home">
-    <FilterBar />
-    <transition name="slide-fade" mode="out-in">
+  <transition name="slide-fade" mode="out-in">
+    <div class="home">
+      <FilterBar />
       <div v-if="!signedIn" key="signed-out" class="intro">
         <h2>Welcome to the new home of your nail polish collection!</h2>
         <p>
@@ -21,17 +21,20 @@
       <div v-else key="signed-in">
         <router-link :to="{ name: 'add-new' }" class="add-new-link">Got something new? Add it here!</router-link>
       </div>
-    </transition>
-  </div>
+      <Swatches />
+    </div>
+  </transition>
 </template>
 
 <script>
   import { mapState } from 'vuex';
   import FilterBar from '../components/FilterBar.vue';
+  import Swatches from '../components/Swatches.vue';
 
   export default {
     components: {
       FilterBar,
+      Swatches,
     },
     computed: mapState({
       signedIn: (state) => state.signedIn,

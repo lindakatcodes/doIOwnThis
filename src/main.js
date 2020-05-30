@@ -1,14 +1,14 @@
-// Firebase
-// eslint-disable-next-line
-import Vue from 'vue';
-import * as firebaseApp from '../firebaseConfig';
-// import VueFirestore from 'vue-firestore';
-
 // Vue & main files
+import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
 import './registerServiceWorker';
+
+// Firebase
+// eslint-disable-next-line
+import firebaseApp from '../firebaseConfig';
+// import VueFirestore from 'vue-firestore';
 
 // CSS
 import 'normalize.css';
