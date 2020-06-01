@@ -20,8 +20,8 @@
       </div>
       <div v-else key="signed-in">
         <router-link :to="{ name: 'add-new' }" class="add-new-link">Got something new? Add it here!</router-link>
+        <Swatches />
       </div>
-      <Swatches />
     </div>
   </transition>
 </template>

@@ -7,7 +7,7 @@ import './registerServiceWorker';
 
 // Firebase
 // eslint-disable-next-line
-import firebaseApp from '../firebaseConfig';
+import * as firebase from '../firebaseConfig';
 // import VueFirestore from 'vue-firestore';
 
 // CSS

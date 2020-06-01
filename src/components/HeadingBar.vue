@@ -19,6 +19,7 @@
 </template>
 
 <script>
+  import firebase from 'firebase/app';
   import { auth } from '../../firebaseConfig';
 
   export default {
@@ -54,7 +55,7 @@
     methods: {
       login() {
         // console.debug('Callback context login', this)
-        const provider = new auth.GoogleAuthProvider();
+        const provider = new firebase.auth.GoogleAuthProvider();
         auth.signInWithRedirect(provider);
       },
       logout() {

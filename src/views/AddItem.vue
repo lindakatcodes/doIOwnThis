@@ -5,6 +5,12 @@
       Woohoo, new stuff! <br />
       Let's add it to your collection!
     </h2>
+    <div v-if="errors.length" class="error">
+      Oops! There's a few errors. Please correct these:
+      <ul v-for="error in errors" :key="error">
+        <li>{{ error }}</li>
+      </ul>
+    </div>
     <form class="add-item-form" enctype="multipart/form-data" method="post" @submit.prevent="addPolish($event.target)">
       <!-- FUTURE IDEA
       Initially show a category only, allow to pick one that already exists, or go to new page to set up a new category
@@ -12,7 +18,7 @@
       <!-- TODO
       Make a way to batch add items - select which categories are the same, then only fill out the different fields and submit all together? -->
       <label class="form-label" for="brand">Brand name </label>
-      <input id="brand" v-model.trim="newBrand" type="text" placeholder="Sally Hansen, Essie, etc" required />
+      <input id="brand" v-model.trim="newBrand" type="text" placeholder="Sally Hansen, Essie, etc" />
 
       <label class="form-label" for="sub-brand">Is there a sub-brand or collection name?</label>
       <input id="sub-brand" v-model.trim="newSubBrand" type="text" placeholder="Insta-Dri, PixieDust, etc" />
@@ -21,7 +27,7 @@
       <input id="item-name" v-model.trim="newName" type="text" placeholder="Mint Apple, Apartment for Two, etc" />
 
       <label class="form-label" for="color-group">What color is it?</label>
-      <select id="color-group" v-model="newColorGroup" name="colorGroup" required>
+      <select id="color-group" v-model="newColorGroup" name="colorGroup">
         <option value="">Select which option it's closest to:</option>
         <option value="base">Basics (Base/Top Coat, Strengthener)</option>
         <option value="blue">Blue</option>
@@ -41,7 +47,7 @@
       <input id="style" v-model.trim="newFinish" type="text" placeholder="Matte, Gloss, Gel, Texture" />
 
       <label class="form-label" for="pic">Pick a picture to show the color</label>
-      <input id="pic" ref="newImage" type="file" accept=".jpg, .png, .jpeg" required />
+      <input id="pic" ref="newImage" type="file" accept=".jpg, .png, .jpeg" />
       <!-- ToDo - on submit, redirect to home page w/ success message on success; show errors and stay on page if errors -->
       <button class="add-item-button" type="submit">Add Item</button>
     </form>
@@ -62,45 +68,76 @@
         newColorGroup: '',
         newFinish: '',
         newImage: '',
+        errors: [],
       };
     },
     methods: {
       addPolish(formData) {
         const file = formData[5].files[0];
 
-        polishes
-          .add({
-            brand: this.newBrand,
-            subBrand: this.newSubBrand,
-            name: this.newName,
-            colorGroup: this.newColorGroup,
-            finish: this.newFinish,
-            created: new Date(),
-            addedBy: auth.currentUser.uid,
-          })
-          .then(function (itemRef) {
-            const filePath = `${auth.currentUser.uid}/${file.name}`;
-            return storage
-              .ref(filePath)
-              .put(file)
-              .then(function (fileSnapshot) {
-                return fileSnapshot.ref.getDownloadURL().then((url) => {
-                  itemRef.update({
-                    image: url,
-                    storageUri: fileSnapshot.metadata.fullPath,
+        const validated = this.validForm(file);
+
+        if (validated) {
+          polishes
+            .add({
+              brand: this.newBrand,
+              subBrand: this.newSubBrand,
+              name: this.newName,
+              colorGroup: this.newColorGroup,
+              finish: this.newFinish,
+              created: new Date(),
+              addedBy: auth.currentUser.uid,
+            })
+            .then(function (itemRef) {
+              const filePath = `${auth.currentUser.uid}/${file.name}`;
+              return storage
+                .ref(filePath)
+                .put(file)
+                .then(function (fileSnapshot) {
+                  return fileSnapshot.ref.getDownloadURL().then((url) => {
+                    itemRef.update({
+                      image: url,
+                      storageUri: fileSnapshot.metadata.fullPath,
+                    });
                   });
                 });
+            })
+            .then(() => {
+              console.log('Item successfully added to your collection!');
+              this.$router.push({
+                name: 'Home',
               });
-          })
-          .then(() => {
-            console.log('Item successfully added to your collection!');
-            this.$router.push({
-              name: 'Home',
+            })
+            .catch(function (error) {
+              console.error('Problem adding your data: ', error);
             });
-          })
-          .catch(function (error) {
-            console.error('Problem adding your data: ', error);
-          });
+        }
+      },
+      validForm(file) {
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        const validFile = file ? validTypes.includes(file.type) : false;
+
+        if (this.newBrand && this.newColorGroup && validFile) {
+          return true;
+        }
+
+        this.errors = [];
+        document.querySelector('#brand').classList.remove('error-border');
+        document.querySelector('#color-group').classList.remove('error-border');
+        document.querySelector('#pic').classList.remove('error-border');
+
+        if (!this.newBrand) {
+          this.errors.push('Brand name is required.');
+          document.querySelector('#brand').classList.add('error-border');
+        }
+        if (!this.newColorGroup) {
+          this.errors.push('Color group selection is required.');
+          document.querySelector('#color-group').classList.add('error-border');
+        }
+        if (!validFile) {
+          this.errors.push('An image is required. Please add a file that ends in .jpg, .jpeg, or .png.');
+          document.querySelector('#pic').classList.add('error-border');
+        }
       },
     },
   };
@@ -164,5 +201,14 @@
     color: var(--dark-font-color);
     border-color: var(--light-bg);
     align-self: center;
+  }
+
+  .error {
+    color: var(--dark-accent);
+    font-weight: bold;
+  }
+
+  .error-border {
+    border: 2px solid var(--dark-accent);
   }
 </style>
