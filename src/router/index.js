@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import AddItem from '../views/AddItem.vue';
+import SwatchDetails from '../views/SwatchDetails.vue';
 
 Vue.use(VueRouter);
 
@@ -17,13 +18,19 @@ const routes = [
     component: AddItem,
   },
   {
-    path: '/edit',
-    name: 'Edit Collections',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/EditCollections.vue'),
+    path: '/swatch/:id',
+    name: 'single-swatch',
+    component: SwatchDetails,
+    props: true,
   },
+  // {
+  //   path: '/edit',
+  //   name: 'Edit Collections',
+  //   // route level code-splitting
+  //   // this generates a separate chunk (about.[hash].js) for this route
+  //   // which is lazy-loaded when the route is visited.
+  //   component: () => import(/* webpackChunkName: "about" */ '../views/EditCollections.vue'),
+  // },
 ];
 
 const router = new VueRouter({

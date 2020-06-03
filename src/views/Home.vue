@@ -20,7 +20,11 @@
       </div>
       <div v-else key="signed-in">
         <router-link :to="{ name: 'add-new' }" class="add-new-link">Got something new? Add it here!</router-link>
-        <Swatches />
+        <p v-if="swatches.length == 0">Nothing to show yet! Add some items to see them here.</p>
+        <p v-else>Click on a swatch to see it's full details!</p>
+        <div class="allSwatches">
+          <Swatch v-for="swatch in swatches" :key="swatch.id" :swatch="swatch" />
+        </div>
       </div>
     </div>
   </transition>
@@ -29,16 +33,39 @@
 <script>
   import { mapState } from 'vuex';
   import FilterBar from '../components/FilterBar.vue';
-  import Swatches from '../components/Swatches.vue';
+  import Swatch from '../components/Swatch.vue';
+  import { db } from '../../firebaseConfig';
 
   export default {
     components: {
       FilterBar,
-      Swatches,
+      Swatch,
+    },
+    data() {
+      return {
+        swatches: [],
+      };
     },
     computed: mapState({
       signedIn: (state) => state.signedIn,
+      setUserId: (state) => state.currentUser.userId,
     }),
+    mounted() {
+      const currentUserId = this.setUserId;
+      const buildSwatches = [];
+
+      db.collection('nailPolish')
+        .where('addedBy', '==', currentUserId)
+        .get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            const currSwatch = doc.data();
+            currSwatch.id = doc.id;
+            buildSwatches.push(currSwatch);
+          });
+        });
+      this.swatches = buildSwatches;
+    },
   };
 </script>
 
@@ -73,5 +100,19 @@
   .add-new-link:hover {
     background-image: linear-gradient(0deg, var(--accent) 0, var(--accent) 45%, transparent 0, transparent);
     font-size: 1.025rem;
+  }
+
+  p {
+    margin-top: 3%;
+    text-align: center;
+  }
+
+  .allSwatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.25rem;
+    justify-items: center;
+    align-items: start;
+    margin-top: 3%;
   }
 </style>
