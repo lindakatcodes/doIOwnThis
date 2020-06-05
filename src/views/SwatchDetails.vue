@@ -25,6 +25,10 @@
         </tr>
       </table>
     </div>
+    <div class="adjustments">
+      <button class="edit" @click="editItem">Edit Item Details</button>
+      <button class="delete" @click="deleteItem">Delete This Item</button>
+    </div>
   </section>
 </template>
 
@@ -50,12 +54,37 @@
           console.log(error);
         });
     },
+    methods: {
+      editItem() {
+        // call route to edit form w/ swatch info as prop
+        this.$router.push({
+          name: 'edit',
+          props: {
+            id: this.$attrs.id,
+          },
+        });
+      },
+      deleteItem() {
+        // search for item in db & delete it, redirect to home screen with notification
+        db.collection('nailPolish')
+          .doc(this.$attrs.id)
+          .delete()
+          .then(() => {
+            console.log('Item deleted successfully!');
+            this.$router.push({ name: 'Home' });
+          })
+          .catch(function (error) {
+            console.log('Error deleting data: ', error);
+          });
+      },
+    },
   };
 </script>
 
 <style scoped>
   section {
     margin-top: 3%;
+    margin-bottom: 10%;
   }
 
   .back {
@@ -113,5 +142,28 @@
 
   .info {
     text-transform: capitalize;
+  }
+
+  .adjustments {
+    margin-top: 3%;
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  button {
+    padding: 3%;
+    border-radius: 7px;
+    border: none;
+    box-shadow: 3px 3px 7px 0 var(--dark-bg);
+    cursor: pointer;
+  }
+
+  .edit {
+    background: var(--accent);
+  }
+
+  .delete {
+    background: var(--dark-accent);
+    color: var(--light-font-color);
   }
 </style>

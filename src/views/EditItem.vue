@@ -1,9 +1,8 @@
 <template>
-  <div class="add-item-page">
-    <router-link :to="{ name: 'Home' }" class="cancel">← Cancel</router-link>
+  <div class="edit-item-page">
+    <router-link :to="{ name: 'single-swatch', params: { id: this.$attrs.id } }" class="cancel">← Cancel</router-link>
     <h2 class="title">
-      Woohoo, new stuff! <br />
-      Let's add it to your collection!
+      Edit Item
     </h2>
     <div v-if="errors.length" class="error">
       Oops! There's a few errors. Please correct these:
@@ -11,23 +10,18 @@
         <li>{{ error }}</li>
       </ul>
     </div>
-    <form class="add-item-form" enctype="multipart/form-data" method="post" @submit.prevent="addPolish($event.target)">
-      <!-- FUTURE IDEA
-      Initially show a category only, allow to pick one that already exists, or go to new page to set up a new category
-      Then, once category is picked or set up, populate a form with the category's field options -->
-      <!-- TODO
-      Make a way to batch add items - select which categories are the same, then only fill out the different fields and submit all together? -->
+    <form class="edit-item-form" enctype="multipart/form-data" method="post" @submit.prevent="editPolish($event.target)">
       <label class="form-label" for="brand">Brand name </label>
-      <input id="brand" v-model.trim="newBrand" type="text" placeholder="Sally Hansen, Essie, etc" />
+      <input id="brand" v-model.trim="Brand" type="text" placeholder="Sally Hansen, Essie, etc" />
 
       <label class="form-label" for="sub-brand">Is there a sub-brand or collection name?</label>
-      <input id="sub-brand" v-model.trim="newSubBrand" type="text" placeholder="Insta-Dri, PixieDust, etc" />
+      <input id="sub-brand" v-model.trim="SubBrand" type="text" placeholder="Insta-Dri, PixieDust, etc" />
 
       <label class="form-label" for="item-name">Name of color</label>
-      <input id="item-name" v-model.trim="newName" type="text" placeholder="Mint Apple, Apartment for Two, etc" />
+      <input id="item-name" v-model.trim="Name" type="text" placeholder="Mint Apple, Apartment for Two, etc" />
 
       <label class="form-label" for="color-group">What color is it?</label>
-      <select id="color-group" v-model="newColorGroup" name="colorGroup">
+      <select id="color-group" v-model="ColorGroup" name="colorGroup">
         <option value="">Select which option it's closest to:</option>
         <option value="base">Basics (Base/Top Coat, Strengthener)</option>
         <option value="blue">Blue</option>
@@ -44,12 +38,11 @@
       </select>
 
       <label class="form-label" for="style">What kind of finish does it have?</label>
-      <input id="style" v-model.trim="newFinish" type="text" placeholder="Matte, Gloss, Gel, Texture" />
+      <input id="style" v-model.trim="Finish" type="text" placeholder="Matte, Gloss, Gel, Texture" />
 
       <label class="form-label" for="pic">Pick a picture to show the color</label>
       <input id="pic" ref="newImage" type="file" accept=".jpg, .png, .jpeg" />
-      <!-- ToDo - on submit, redirect to home page w/ success message on success; show errors and stay on page if errors -->
-      <button class="add-item-button" type="submit">Add Item</button>
+      <button class="edit-item-button" type="submit">Confirm Edits</button>
     </form>
   </div>
 </template>
@@ -62,17 +55,31 @@
   export default {
     data() {
       return {
-        newBrand: '',
-        newSubBrand: '',
-        newName: '',
-        newColorGroup: '',
-        newFinish: '',
-        newImage: '',
+        Brand: '',
+        SubBrand: '',
+        Name: '',
+        ColorGroup: '',
+        Finish: '',
+        Image: '',
         errors: [],
       };
     },
+    mounted() {
+      const itemRef = db.collection('nailPolish').doc(this.$attrs.id);
+      const thisRef = this;
+
+      itemRef.get().then(function (doc) {
+        const data = doc.data();
+        thisRef.Brand = data.brand;
+        thisRef.SubBrand = data.subBrand;
+        thisRef.Name = data.name;
+        thisRef.ColorGroup = data.colorGroup;
+        thisRef.Finish = data.finish;
+        thisRef.Image = data.image;
+      });
+    },
     methods: {
-      addPolish(formData) {
+      editPolish(formData) {
         const file = formData[5].files[0];
 
         const validated = this.validForm(file);
@@ -80,11 +87,11 @@
         if (validated) {
           polishes
             .add({
-              brand: this.newBrand,
-              subBrand: this.newSubBrand,
-              name: this.newName,
-              colorGroup: this.newColorGroup,
-              finish: this.newFinish,
+              brand: this.Brand,
+              subBrand: this.SubBrand,
+              name: this.Name,
+              colorGroup: this.ColorGroup,
+              finish: this.Finish,
               created: new Date(),
               addedBy: auth.currentUser.uid,
             })
@@ -103,13 +110,13 @@
                 });
             })
             .then(() => {
-              console.log('Item successfully added to your collection!');
+              console.log('Item successfully updated!');
               this.$router.push({
                 name: 'Home',
               });
             })
             .catch(function (error) {
-              console.error('Problem adding your data: ', error);
+              console.error('Problem editing your data: ', error);
             });
         }
       },
@@ -117,7 +124,7 @@
         const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
         const validFile = file ? validTypes.includes(file.type) : false;
 
-        if (this.newBrand && this.newColorGroup && validFile) {
+        if (this.Brand && this.ColorGroup && validFile) {
           return true;
         }
 
@@ -126,11 +133,11 @@
         document.querySelector('#color-group').classList.remove('error-border');
         document.querySelector('#pic').classList.remove('error-border');
 
-        if (!this.newBrand) {
+        if (!this.Brand) {
           this.errors.push('Brand name is required.');
           document.querySelector('#brand').classList.add('error-border');
         }
-        if (!this.newColorGroup) {
+        if (!this.ColorGroup) {
           this.errors.push('Color group selection is required.');
           document.querySelector('#color-group').classList.add('error-border');
         }
@@ -144,7 +151,7 @@
 </script>
 
 <style scoped>
-  .add-item-page {
+  .edit-item-page {
     margin: 3% 3% 10% 3%;
   }
 
@@ -166,7 +173,7 @@
     color: var(--dark-font-color);
   }
 
-  .add-item-form {
+  .edit-item-form {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -193,7 +200,7 @@
     width: 95%;
   }
 
-  .add-item-button {
+  .edit-item-button {
     width: 45%;
     padding: 4%;
     border-radius: 4px;

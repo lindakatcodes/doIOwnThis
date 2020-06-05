@@ -113,7 +113,7 @@ module.exports = {
       {
         trailingComma: 'es5',
         singleQuote: true,
-        printWidth: 120,
+        printWidth: 130,
         endOfLine: 'crlf',
         vueIndentScriptAndStyle: true,
       },
