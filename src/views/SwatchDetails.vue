@@ -33,7 +33,7 @@
 </template>
 
 <script>
-  import { db } from '../../firebaseConfig';
+  import { db, storage } from '../../firebaseConfig';
 
   export default {
     data() {
@@ -65,9 +65,21 @@
         });
       },
       deleteItem() {
+        const itemRef = db.collection('nailPolish').doc(this.$attrs.id);
+        // first, remove photo from storage
+        const fileToRemove = this.swatch.storageUri;
+        storage
+          .ref(fileToRemove)
+          .delete()
+          .then(function () {
+            console.log('Old file removed from storage');
+          })
+          .catch(function (error) {
+            console.log('Problem removing old file: ', error);
+          });
+
         // search for item in db & delete it, redirect to home screen with notification
-        db.collection('nailPolish')
-          .doc(this.$attrs.id)
+        itemRef
           .delete()
           .then(() => {
             console.log('Item deleted successfully!');

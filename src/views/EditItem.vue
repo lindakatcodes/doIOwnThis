@@ -40,7 +40,7 @@
       <label class="form-label" for="style">What kind of finish does it have?</label>
       <input id="style" v-model.trim="Finish" type="text" placeholder="Matte, Gloss, Gel, Texture" />
 
-      <label class="form-label" for="pic">Pick a picture to show the color</label>
+      <label class="form-label" for="pic">Pick a new picture if desired</label>
       <input id="pic" ref="newImage" type="file" accept=".jpg, .png, .jpeg" />
       <button class="edit-item-button" type="submit">Confirm Edits</button>
     </form>
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-  import { db, auth, storage } from '../../firebaseConfig';
+  import { db, auth, storage, timestamp } from '../../firebaseConfig';
 
   const polishes = db.collection('nailPolish');
 
@@ -62,13 +62,14 @@
         Finish: '',
         Image: '',
         errors: [],
+        imageStoragePath: '',
       };
     },
     mounted() {
-      const itemRef = db.collection('nailPolish').doc(this.$attrs.id);
       const thisRef = this;
+      const itemRefer = db.collection('nailPolish').doc(this.$attrs.id);
 
-      itemRef.get().then(function (doc) {
+      itemRefer.get().then(function (doc) {
         const data = doc.data();
         thisRef.Brand = data.brand;
         thisRef.SubBrand = data.subBrand;
@@ -76,38 +77,61 @@
         thisRef.ColorGroup = data.colorGroup;
         thisRef.Finish = data.finish;
         thisRef.Image = data.image;
+        thisRef.imageStoragePath = data.storageUri;
       });
     },
     methods: {
       editPolish(formData) {
         const file = formData[5].files[0];
+        let validFile = '';
+        const itemRef = polishes.doc(this.$attrs.id);
+        const thisRef = this;
 
-        const validated = this.validForm(file);
+        if (file) {
+          validFile = this.validateFile(file);
+        }
+
+        const validated = this.validForm(validFile);
 
         if (validated) {
-          polishes
-            .add({
+          itemRef
+            .update({
               brand: this.Brand,
               subBrand: this.SubBrand,
               name: this.Name,
               colorGroup: this.ColorGroup,
               finish: this.Finish,
-              created: new Date(),
-              addedBy: auth.currentUser.uid,
+              lastUpdated: timestamp,
             })
-            .then(function (itemRef) {
-              const filePath = `${auth.currentUser.uid}/${file.name}`;
-              return storage
-                .ref(filePath)
-                .put(file)
-                .then(function (fileSnapshot) {
-                  return fileSnapshot.ref.getDownloadURL().then((url) => {
-                    itemRef.update({
-                      image: url,
-                      storageUri: fileSnapshot.metadata.fullPath,
+            .then(function () {
+              if (validFile) {
+                // first, remove the current file from storage
+                const fileToRemove = thisRef.imageStoragePath;
+
+                storage
+                  .ref(fileToRemove)
+                  .delete()
+                  .then(function () {
+                    console.log('Old file removed from storage');
+                  })
+                  .catch(function (error) {
+                    console.log('Problem removing old file: ', error);
+                  });
+
+                // then, add the new file
+                const filePath = `${auth.currentUser.uid}/${file.name}`;
+                storage
+                  .ref(filePath)
+                  .put(file)
+                  .then(function (fileSnapshot) {
+                    return fileSnapshot.ref.getDownloadURL().then((url) => {
+                      itemRef.update({
+                        image: url,
+                        storageUri: fileSnapshot.metadata.fullPath,
+                      });
                     });
                   });
-                });
+              }
             })
             .then(() => {
               console.log('Item successfully updated!');
@@ -120,12 +144,15 @@
             });
         }
       },
-      validForm(file) {
+      validateFile(file) {
         const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-        const validFile = file ? validTypes.includes(file.type) : false;
-
-        if (this.Brand && this.ColorGroup && validFile) {
-          return true;
+        return file ? validTypes.includes(file.type) : false;
+      },
+      validForm(validFile) {
+        if (this.Brand && this.ColorGroup) {
+          if (validFile === '' || validFile) {
+            return true;
+          }
         }
 
         this.errors = [];
@@ -141,8 +168,8 @@
           this.errors.push('Color group selection is required.');
           document.querySelector('#color-group').classList.add('error-border');
         }
-        if (!validFile) {
-          this.errors.push('An image is required. Please add a file that ends in .jpg, .jpeg, or .png.');
+        if (validFile === false) {
+          this.errors.push('Please add a file that ends in .jpg, .jpeg, or .png.');
           document.querySelector('#pic').classList.add('error-border');
         }
       },

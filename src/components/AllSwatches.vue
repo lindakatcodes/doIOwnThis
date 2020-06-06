@@ -31,6 +31,7 @@
 
       db.collection('nailPolish')
         .where('addedBy', '==', currentUserId)
+        .orderBy('lastUpdated')
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {

@@ -1,7 +1,7 @@
 <template>
   <router-link class="link" :to="{ name: 'single-swatch', params: { id: swatch.id } }">
     <figure class="swatch">
-      <img :src="swatch.image" class="swatch-img" />
+      <img :src="swatch.image" class="swatch-img" alt="Picture showing color of {{ swatch.name }}" />
       <figcaption class="swatch-name">{{ swatch.name }}</figcaption>
     </figure>
   </router-link>

@@ -8,15 +8,12 @@ import './registerServiceWorker';
 // Firebase
 // eslint-disable-next-line
 import * as firebase from '../firebaseConfig';
-// import VueFirestore from 'vue-firestore';
 
 // CSS
 import 'normalize.css';
 import './assets/global.css';
 
 Vue.config.productionTip = false;
-
-// Vue.use(VueFirestore);
 
 new Vue({
   router,

@@ -55,7 +55,7 @@
 </template>
 
 <script>
-  import { db, auth, storage } from '../../firebaseConfig';
+  import { db, auth, storage, timestamp } from '../../firebaseConfig';
 
   const polishes = db.collection('nailPolish');
 
@@ -72,10 +72,15 @@
       };
     },
     methods: {
-      addPolish(formData) {
+      async addPolish(formData) {
         const file = formData[5].files[0];
+        let validFile = '';
 
-        const validated = this.validForm(file);
+        if (file) {
+          validFile = this.validateFile(file);
+        }
+
+        const validated = await this.validForm(validFile);
 
         if (validated) {
           polishes
@@ -85,22 +90,24 @@
               name: this.newName,
               colorGroup: this.newColorGroup,
               finish: this.newFinish,
-              created: new Date(),
+              lastUpdated: timestamp,
               addedBy: auth.currentUser.uid,
             })
             .then(function (itemRef) {
-              const filePath = `${auth.currentUser.uid}/${file.name}`;
-              return storage
-                .ref(filePath)
-                .put(file)
-                .then(function (fileSnapshot) {
-                  return fileSnapshot.ref.getDownloadURL().then((url) => {
-                    itemRef.update({
-                      image: url,
-                      storageUri: fileSnapshot.metadata.fullPath,
+              if (validFile) {
+                const filePath = `${auth.currentUser.uid}/${file.name}`;
+                return storage
+                  .ref(filePath)
+                  .put(file)
+                  .then(function (fileSnapshot) {
+                    return fileSnapshot.ref.getDownloadURL().then((url) => {
+                      itemRef.update({
+                        image: url,
+                        storageUri: fileSnapshot.metadata.fullPath,
+                      });
                     });
                   });
-                });
+              }
             })
             .then(() => {
               console.log('Item successfully added to your collection!');
@@ -113,18 +120,33 @@
             });
         }
       },
-      validForm(file) {
+      validateFile(file) {
         const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-        const validFile = file ? validTypes.includes(file.type) : false;
+        return file ? validTypes.includes(file.type) : false;
+      },
+      async validForm(validFile) {
+        let query = [];
+        await polishes
+          .where('addedBy', '==', auth.currentUser.uid)
+          .where('brand', '==', this.newBrand)
+          .where('name', '==', this.newName)
+          .get()
+          .then(function (result) {
+            query = result.docs;
+          });
+        console.log(query);
 
-        if (this.newBrand && this.newColorGroup && validFile) {
-          return true;
+        if (this.newBrand && this.newColorGroup && query.length === 0) {
+          if (validFile === '' || validFile) {
+            return true;
+          }
         }
 
         this.errors = [];
         document.querySelector('#brand').classList.remove('error-border');
         document.querySelector('#color-group').classList.remove('error-border');
         document.querySelector('#pic').classList.remove('error-border');
+        document.querySelector('#item-name').classList.remove('error-border');
 
         if (!this.newBrand) {
           this.errors.push('Brand name is required.');
@@ -134,10 +156,18 @@
           this.errors.push('Color group selection is required.');
           document.querySelector('#color-group').classList.add('error-border');
         }
-        if (!validFile) {
-          this.errors.push('An image is required. Please add a file that ends in .jpg, .jpeg, or .png.');
+        if (validFile === false) {
+          this.errors.push('Please add a file that ends in .jpg, .jpeg, or .png.');
           document.querySelector('#pic').classList.add('error-border');
         }
+        if (query.length > 0) {
+          this.errors.push(
+            'It looks like an item with this name from this brand already exists in your collection! Please double check your info or go back to the full collection to verify.'
+          );
+          document.querySelector('#item-name').classList.add('error-border');
+        }
+
+        return false;
       },
     },
   };
