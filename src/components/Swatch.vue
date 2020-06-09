@@ -1,7 +1,7 @@
 <template>
   <router-link class="link" :to="{ name: 'single-swatch', params: { id: swatch.id } }">
     <figure class="swatch">
-      <img :src="swatch.image" class="swatch-img" alt="Picture showing color of {{ swatch.name }}" />
+      <img :src="swatch.image" class="swatch-img" alt="Picture showing color of polish named in caption" />
       <figcaption class="swatch-name">{{ swatch.name }}</figcaption>
     </figure>
   </router-link>
@@ -44,9 +44,11 @@
 
   .link {
     text-decoration: none;
+    color: var(--dark-font-color);
   }
 
   .link:hover {
     text-decoration: underline var(--accent);
+    text-decoration-thickness: 3px;
   }
 </style>

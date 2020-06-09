@@ -49,6 +49,11 @@
       <label class="form-label" for="pic">Pick a picture to show the color</label>
       <input id="pic" ref="newImage" type="file" accept=".jpg, .png, .jpeg" />
       <!-- ToDo - on submit, redirect to home page w/ success message on success; show errors and stay on page if errors -->
+      <div class="newItemCheck">
+        <input id="addAnother" class="addCheckbox" name="addNewItem" type="checkbox" />
+        <label class="form-label addCheckLabel" for="addAnother">Want to add another item?</label>
+      </div>
+
       <button class="add-item-button" type="submit">Add Item</button>
     </form>
   </div>
@@ -73,8 +78,10 @@
     },
     methods: {
       async addPolish(formData) {
+        const form = document.querySelector('.add-item-form');
         const file = formData[5].files[0];
         let validFile = '';
+        const addNew = formData[6].checked;
 
         if (file) {
           validFile = this.validateFile(file);
@@ -92,6 +99,7 @@
               finish: this.newFinish,
               lastUpdated: timestamp,
               addedBy: auth.currentUser.uid,
+              image: '',
             })
             .then(function (itemRef) {
               if (validFile) {
@@ -111,9 +119,13 @@
             })
             .then(() => {
               console.log('Item successfully added to your collection!');
-              this.$router.push({
-                name: 'Home',
-              });
+              if (addNew) {
+                form.reset();
+              } else {
+                this.$router.push({
+                  name: 'Home',
+                });
+              }
             })
             .catch(function (error) {
               console.error('Problem adding your data: ', error);
@@ -134,7 +146,6 @@
           .then(function (result) {
             query = result.docs;
           });
-        console.log(query);
 
         if (this.newBrand && this.newColorGroup && query.length === 0) {
           if (validFile === '' || validFile) {
@@ -221,6 +232,17 @@
 
   select {
     width: 95%;
+  }
+
+  .newItemCheck {
+    margin-left: 7%;
+    margin-bottom: 2%;
+    width: 85%;
+    font-size: 1.05rem;
+  }
+
+  .addCheckbox {
+    width: 10%;
   }
 
   .add-item-button {
