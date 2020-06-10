@@ -89,7 +89,7 @@
       async addPolish(formData) {
         const form = document.querySelector('.add-item-form');
         const file = formData[5].files[0];
-        console.log(file);
+        // console.log(file);
         let validFile = '';
         const addNew = formData[6].checked;
 
@@ -103,6 +103,7 @@
           // first, add the photo to storage and add the photo data to our local data
           if (file && validFile) {
             this.savePhoto(file).then((imageData) => {
+              console.log('image saved');
               this.singleSwatch.image = imageData.url;
               this.singleSwatch.storageUri = imageData.storageUri;
             });
@@ -129,8 +130,8 @@
         return file ? validTypes.includes(file.type) : false;
       },
       async validForm(validFile) {
-        let query = [];
-        await this.checkSwatchExists([this.singleSwatch.brand, this.singleSwatch.name]).then((result) => (query = result));
+        const query = await this.checkSwatchExists([this.singleSwatch.brand, this.singleSwatch.name]);
+        console.log('query', query);
         // await polishes
         //   .where('addedBy', '==', auth.currentUser.uid)
         //   .where('brand', '==', this.newBrand)
@@ -140,8 +141,9 @@
         //     query = result.docs;
         //   });
 
-        if (this.singleSwatch.brand && this.singleSwatch.colorGroup && query.length === 0) {
+        if (this.singleSwatch.brand && this.singleSwatch.colorGroup && query) {
           if (validFile === '' || validFile) {
+            console.log('file is valid');
             return true;
           }
         }
@@ -164,7 +166,7 @@
           this.errors.push('Please add a file that ends in .jpg, .jpeg, or .png.');
           document.querySelector('#pic').classList.add('error-border');
         }
-        if (query.length > 0) {
+        if (query === false) {
           this.errors.push(
             'It looks like an item with this name from this brand already exists in your collection! Please double check your info or go back to the full collection to verify.'
           );

@@ -119,17 +119,23 @@ export default {
     },
     // check if swatch already exists in db
     checkSwatchExists({ rootState }, fields) {
-      console.log(rootState.currentUser.userId, fields);
       db.collection('nailPolish')
         .where('addedBy', '==', rootState.currentUser.userId)
         .where('brand', '==', fields[0])
         .where('name', '==', fields[1])
         .get()
-        .then(function (result) {
-          if (result) {
-            return true;
+        .then(function (doc) {
+          console.log('doc, ', doc);
+          console.log(doc.exists);
+          let exists = '';
+          if (doc.exists) {
+            console.log('doc exists');
+            exists = true;
+          } else {
+            console.log('no doc');
+            exists = false;
           }
-          return false;
+          return exists;
         });
     },
   },
