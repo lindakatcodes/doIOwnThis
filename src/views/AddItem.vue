@@ -17,17 +17,17 @@
       Then, once category is picked or set up, populate a form with the category's field options -->
       <!-- TODO
       Make a way to batch add items - select which categories are the same, then only fill out the different fields and submit all together? -->
-      <label class="form-label" for="brand">Brand name </label>
-      <input id="brand" v-model.trim="newBrand" type="text" placeholder="Sally Hansen, Essie, etc" />
+      <label class="form-label" for="brand">Brand name <span class="required">*</span> </label>
+      <input id="brand" v-model.trim="singleSwatch.brand" type="text" placeholder="Sally Hansen, Essie, etc" />
 
       <label class="form-label" for="sub-brand">Is there a sub-brand or collection name?</label>
-      <input id="sub-brand" v-model.trim="newSubBrand" type="text" placeholder="Insta-Dri, PixieDust, etc" />
+      <input id="sub-brand" v-model.trim="singleSwatch.subBrand" type="text" placeholder="Insta-Dri, PixieDust, etc" />
 
       <label class="form-label" for="item-name">Name of color</label>
-      <input id="item-name" v-model.trim="newName" type="text" placeholder="Mint Apple, Apartment for Two, etc" />
+      <input id="item-name" v-model.trim="singleSwatch.name" type="text" placeholder="Mint Apple, Apartment for Two, etc" />
 
-      <label class="form-label" for="color-group">What color is it?</label>
-      <select id="color-group" v-model="newColorGroup" name="colorGroup">
+      <label class="form-label" for="color-group">What color is it? <span class="required">*</span></label>
+      <select id="color-group" v-model="singleSwatch.colorGroup" name="colorGroup">
         <option value="">Select which option it's closest to:</option>
         <option value="base">Basics (Base/Top Coat, Strengthener)</option>
         <option value="blue">Blue</option>
@@ -44,9 +44,9 @@
       </select>
 
       <label class="form-label" for="style">What kind of finish does it have?</label>
-      <input id="style" v-model.trim="newFinish" type="text" placeholder="Matte, Gloss, Gel, Texture" />
+      <input id="style" v-model.trim="singleSwatch.finish" type="text" placeholder="Matte, Gloss, Gel, Texture" />
 
-      <label class="form-label" for="pic">Pick a picture to show the color</label>
+      <label class="form-label" for="pic">Pick a picture to show the color (recommended)</label>
       <input id="pic" ref="newImage" type="file" accept=".jpg, .png, .jpeg" />
       <!-- ToDo - on submit, redirect to home page w/ success message on success; show errors and stay on page if errors -->
       <div class="newItemCheck">
@@ -60,26 +60,36 @@
 </template>
 
 <script>
-  import { db, auth, storage, timestamp } from '../../firebaseConfig';
+  // import { db, auth, storage, timestamp } from '../../firebaseConfig';
+  import { mapActions } from 'vuex';
 
-  const polishes = db.collection('nailPolish');
+  // const polishes = db.collection('nailPolish');
 
   export default {
     data() {
       return {
-        newBrand: '',
-        newSubBrand: '',
-        newName: '',
-        newColorGroup: '',
-        newFinish: '',
-        newImage: '',
+        singleSwatch: {
+          name: '',
+          brand: '',
+          subBrand: '',
+          colorGroup: '',
+          finish: '',
+          image: '',
+          storageUri: '',
+        },
         errors: [],
       };
     },
     methods: {
+      ...mapActions({
+        addSwatchToDb: 'dbStore/addNewSwatch',
+        savePhoto: 'storageStore/saveNewPhoto',
+        checkSwatchExists: 'dbStore/checkSwatchExists',
+      }),
       async addPolish(formData) {
         const form = document.querySelector('.add-item-form');
         const file = formData[5].files[0];
+        console.log(file);
         let validFile = '';
         const addNew = formData[6].checked;
 
@@ -90,33 +100,15 @@
         const validated = await this.validForm(validFile);
 
         if (validated) {
-          polishes
-            .add({
-              brand: this.newBrand,
-              subBrand: this.newSubBrand,
-              name: this.newName,
-              colorGroup: this.newColorGroup,
-              finish: this.newFinish,
-              lastUpdated: timestamp,
-              addedBy: auth.currentUser.uid,
-              image: '',
-            })
-            .then(function (itemRef) {
-              if (validFile) {
-                const filePath = `${auth.currentUser.uid}/${file.name}`;
-                return storage
-                  .ref(filePath)
-                  .put(file)
-                  .then(function (fileSnapshot) {
-                    return fileSnapshot.ref.getDownloadURL().then((url) => {
-                      itemRef.update({
-                        image: url,
-                        storageUri: fileSnapshot.metadata.fullPath,
-                      });
-                    });
-                  });
-              }
-            })
+          // first, add the photo to storage and add the photo data to our local data
+          if (file && validFile) {
+            this.savePhoto(file).then((imageData) => {
+              this.singleSwatch.image = imageData.url;
+              this.singleSwatch.storageUri = imageData.storageUri;
+            });
+          }
+          // then, add the new data to db & vuex
+          this.addSwatchToDb(this.singleSwatch)
             .then(() => {
               console.log('Item successfully added to your collection!');
               if (addNew) {
@@ -138,16 +130,17 @@
       },
       async validForm(validFile) {
         let query = [];
-        await polishes
-          .where('addedBy', '==', auth.currentUser.uid)
-          .where('brand', '==', this.newBrand)
-          .where('name', '==', this.newName)
-          .get()
-          .then(function (result) {
-            query = result.docs;
-          });
+        await this.checkSwatchExists([this.singleSwatch.brand, this.singleSwatch.name]).then((result) => (query = result));
+        // await polishes
+        //   .where('addedBy', '==', auth.currentUser.uid)
+        //   .where('brand', '==', this.newBrand)
+        //   .where('name', '==', this.newName)
+        //   .get()
+        //   .then(function (result) {
+        //     query = result.docs;
+        //   });
 
-        if (this.newBrand && this.newColorGroup && query.length === 0) {
+        if (this.singleSwatch.brand && this.singleSwatch.colorGroup && query.length === 0) {
           if (validFile === '' || validFile) {
             return true;
           }
@@ -159,11 +152,11 @@
         document.querySelector('#pic').classList.remove('error-border');
         document.querySelector('#item-name').classList.remove('error-border');
 
-        if (!this.newBrand) {
+        if (!this.singleSwatch.brand) {
           this.errors.push('Brand name is required.');
           document.querySelector('#brand').classList.add('error-border');
         }
-        if (!this.newColorGroup) {
+        if (!this.singleSwatch.colorGroup) {
           this.errors.push('Color group selection is required.');
           document.querySelector('#color-group').classList.add('error-border');
         }
@@ -253,6 +246,11 @@
     color: var(--dark-font-color);
     border-color: var(--light-bg);
     align-self: center;
+  }
+
+  .required {
+    color: var(--dark-accent);
+    font-size: 1.1rem;
   }
 
   .error {

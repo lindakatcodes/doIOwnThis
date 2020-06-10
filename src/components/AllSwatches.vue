@@ -9,38 +9,27 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+  import { mapState, mapActions } from 'vuex';
   import Swatch from './Swatch.vue';
-  import { db } from '../../firebaseConfig';
 
   export default {
     components: {
       Swatch,
     },
-    data() {
-      return {
-        swatches: [],
-      };
+    computed: {
+      ...mapState({
+        swatches: (state) => state.dbStore.allSwatches,
+      }),
     },
-    computed: mapState({
-      setUserId: (state) => state.currentUser.userId,
-    }),
     mounted() {
-      const currentUserId = this.setUserId;
-      const buildSwatches = [];
-
-      db.collection('nailPolish')
-        .where('addedBy', '==', currentUserId)
-        .orderBy('lastUpdated', 'desc')
-        .get()
-        .then(function (querySnapshot) {
-          querySnapshot.forEach(function (doc) {
-            const currSwatch = doc.data();
-            currSwatch.id = doc.id;
-            buildSwatches.push(currSwatch);
-          });
-        });
-      this.swatches = buildSwatches;
+      this.getAllSwatches()
+        .then(() => console.log('Succesfully received swatch data'))
+        .catch((error) => console.error('Could not get all swatch data ', error));
+    },
+    methods: {
+      ...mapActions({
+        getAllSwatches: 'dbStore/getAllSwatches',
+      }),
     },
   };
 </script>

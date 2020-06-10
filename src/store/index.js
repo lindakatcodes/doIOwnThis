@@ -1,10 +1,15 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-// import firebase from '../services/firebaseConfig'
+import dbStore from './modules/dbStore';
+import storageStore from './modules/storageStore';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  modules: {
+    dbStore,
+    storageStore,
+  },
   state: {
     currentUser: {},
     signedIn: false,
@@ -23,5 +28,5 @@ export default new Vuex.Store({
     },
   },
   actions: {},
-  modules: {},
+  getters: {},
 });

@@ -33,7 +33,7 @@
 </template>
 
 <script>
-  import { db, storage } from '../../firebaseConfig';
+  import { mapGetters, mapActions } from 'vuex';
 
   export default {
     data() {
@@ -41,18 +41,13 @@
         swatch: {},
       };
     },
+    computed: {
+      ...mapGetters({
+        getSwatch: 'dbStore/getSingleSwatch',
+      }),
+    },
     mounted() {
-      const swatchRef = db.collection('nailPolish').doc(this.$attrs.id);
-      const thisRef = this;
-
-      swatchRef
-        .get()
-        .then(function (doc) {
-          thisRef.swatch = doc.data();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      this.swatch = this.getSwatch(this.$attrs.id);
     },
     methods: {
       editItem() {
@@ -64,29 +59,28 @@
           },
         });
       },
+      ...mapActions({
+        deleteFile: 'dbStore/removeSingleSwatch',
+        deletePhoto: 'storageStore/removeOldPhoto',
+      }),
       deleteItem() {
-        const itemRef = db.collection('nailPolish').doc(this.$attrs.id);
-        // first, remove photo from storage
-        const fileToRemove = this.swatch.storageUri;
-        storage
-          .ref(fileToRemove)
-          .delete()
-          .then(function () {
-            console.log('Old file removed from storage');
-          })
-          .catch(function (error) {
-            console.log('Problem removing old file: ', error);
-          });
-
-        // search for item in db & delete it, redirect to home screen with notification
-        itemRef
-          .delete()
+        const photoToRemove = this.swatch.storageUri;
+        if (photoToRemove) {
+          this.deletePhoto(photoToRemove)
+            .then(() => {
+              console.log('Photo deleted successfully!');
+            })
+            .catch(function (error) {
+              console.log('Problem deleting photo ', error);
+            });
+        }
+        this.deleteFile(this.$attrs.id)
           .then(() => {
             console.log('Item deleted successfully!');
             this.$router.push({ name: 'Home' });
           })
           .catch(function (error) {
-            console.log('Error deleting data: ', error);
+            console.log('Problem deleting file ', error);
           });
       },
     },
