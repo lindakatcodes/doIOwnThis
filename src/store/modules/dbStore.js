@@ -38,6 +38,7 @@ export default {
   actions: {
     // get allSwatches
     getAllSwatches({ commit, rootState }) {
+      commit('CLEAR_SWATCHES');
       const buildSwatches = [];
 
       db.collection('nailPolish')
@@ -115,27 +116,6 @@ export default {
         .delete()
         .then(() => {
           commit('REMOVE_SWATCH', id);
-        });
-    },
-    // check if swatch already exists in db
-    checkSwatchExists({ rootState }, fields) {
-      db.collection('nailPolish')
-        .where('addedBy', '==', rootState.currentUser.userId)
-        .where('brand', '==', fields[0])
-        .where('name', '==', fields[1])
-        .get()
-        .then(function (doc) {
-          console.log('doc, ', doc);
-          console.log(doc.exists);
-          let exists = '';
-          if (doc.exists) {
-            console.log('doc exists');
-            exists = true;
-          } else {
-            console.log('no doc');
-            exists = false;
-          }
-          return exists;
         });
     },
   },

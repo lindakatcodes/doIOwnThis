@@ -55,14 +55,16 @@
   export default {
     data() {
       return {
-        Brand: '',
-        SubBrand: '',
-        Name: '',
-        ColorGroup: '',
-        Finish: '',
-        Image: '',
+        singleSwatch: {
+          name: '',
+          brand: '',
+          subBrand: '',
+          colorGroup: '',
+          finish: '',
+          image: '',
+          storageUri: '',
+        },
         errors: [],
-        imageStoragePath: '',
       };
     },
     mounted() {
@@ -71,13 +73,13 @@
 
       itemRefer.get().then(function (doc) {
         const data = doc.data();
-        thisRef.Brand = data.brand;
-        thisRef.SubBrand = data.subBrand;
-        thisRef.Name = data.name;
-        thisRef.ColorGroup = data.colorGroup;
-        thisRef.Finish = data.finish;
-        thisRef.Image = data.image;
-        thisRef.imageStoragePath = data.storageUri;
+        thisRef.brand = data.brand;
+        thisRef.subBrand = data.subBrand;
+        thisRef.name = data.name;
+        thisRef.colorGroup = data.colorGroup;
+        thisRef.finish = data.finish;
+        thisRef.image = data.image;
+        thisRef.storageuri = data.storageUri;
       });
     },
     methods: {

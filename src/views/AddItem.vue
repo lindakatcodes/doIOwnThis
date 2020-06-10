@@ -15,15 +15,13 @@
       <!-- FUTURE IDEA
       Initially show a category only, allow to pick one that already exists, or go to new page to set up a new category
       Then, once category is picked or set up, populate a form with the category's field options -->
-      <!-- TODO
-      Make a way to batch add items - select which categories are the same, then only fill out the different fields and submit all together? -->
       <label class="form-label" for="brand">Brand name <span class="required">*</span> </label>
       <input id="brand" v-model.trim="singleSwatch.brand" type="text" placeholder="Sally Hansen, Essie, etc" />
 
       <label class="form-label" for="sub-brand">Is there a sub-brand or collection name?</label>
       <input id="sub-brand" v-model.trim="singleSwatch.subBrand" type="text" placeholder="Insta-Dri, PixieDust, etc" />
 
-      <label class="form-label" for="item-name">Name of color</label>
+      <label class="form-label" for="item-name">Name of color <span class="required">*</span></label>
       <input id="item-name" v-model.trim="singleSwatch.name" type="text" placeholder="Mint Apple, Apartment for Two, etc" />
 
       <label class="form-label" for="color-group">What color is it? <span class="required">*</span></label>
@@ -62,10 +60,12 @@
 <script>
   // import { db, auth, storage, timestamp } from '../../firebaseConfig';
   import { mapActions } from 'vuex';
+  import formValidation from '../mixins/formValidation';
 
   // const polishes = db.collection('nailPolish');
 
   export default {
+    mixins: [formValidation],
     data() {
       return {
         singleSwatch: {
@@ -84,36 +84,57 @@
       ...mapActions({
         addSwatchToDb: 'dbStore/addNewSwatch',
         savePhoto: 'storageStore/saveNewPhoto',
-        checkSwatchExists: 'dbStore/checkSwatchExists',
       }),
       async addPolish(formData) {
-        const form = document.querySelector('.add-item-form');
+        // store a few things we'll need in variables
+        // first, easy access to a file (if provided) & add new item check
         const file = formData[5].files[0];
-        // console.log(file);
-        let validFile = '';
+        console.log(file);
         const addNew = formData[6].checked;
 
-        if (file) {
-          validFile = this.validateFile(file);
-        }
+        // then, a handful of query selectors
+        const formSelector = document.querySelector('.add-item-form');
+        const brandSelector = document.querySelector('#brand');
+        const nameSelector = document.querySelector('#item-name');
+        const colorSelector = document.querySelector('#color-group');
+        const picSelector = document.querySelector('#pic');
 
-        const validated = await this.validForm(validFile);
+        // will also need a selectors object, to hold the fields that will need error functionality
+        const selectors = {
+          brand: brandSelector,
+          name: nameSelector,
+          color: colorSelector,
+          photo: picSelector,
+        };
 
+        // okay. first, we need to see if the form data is valid. our validation check needs a few things: the singleSwatch data, our photo file, an empty errors array, and our selectors object. it will return an array with the first item being our truthy validation, and the second item being the final errors array - will be empty if the form is valid, otherwise will contain the errors we need to push to our data's error array
+        this.errors = [];
+        selectors.brand.classList.remove('error-border');
+        selectors.name.classList.remove('error-border');
+        selectors.color.classList.remove('error-border');
+        selectors.photo.classList.remove('error-border');
+
+        const validatedResult = await this.validateForm(this.singleSwatch, file, this.errors, selectors);
+        const validated = validatedResult[0];
+        console.log('valid form status: ', validated);
+
+        // if validation passes, we're good to add to our db!
         if (validated) {
           // first, add the photo to storage and add the photo data to our local data
-          if (file && validFile) {
-            this.savePhoto(file).then((imageData) => {
-              console.log('image saved');
+          if (file) {
+            await this.savePhoto(file).then((imageData) => {
+              console.log('image saved', imageData);
               this.singleSwatch.image = imageData.url;
               this.singleSwatch.storageUri = imageData.storageUri;
             });
           }
-          // then, add the new data to db & vuex
+          console.log('current data: ', this.singleSwatch);
+          // then, add the new data to db
           this.addSwatchToDb(this.singleSwatch)
             .then(() => {
               console.log('Item successfully added to your collection!');
               if (addNew) {
-                form.reset();
+                formSelector.reset();
               } else {
                 this.$router.push({
                   name: 'Home',
@@ -124,56 +145,6 @@
               console.error('Problem adding your data: ', error);
             });
         }
-      },
-      validateFile(file) {
-        const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-        return file ? validTypes.includes(file.type) : false;
-      },
-      async validForm(validFile) {
-        const query = await this.checkSwatchExists([this.singleSwatch.brand, this.singleSwatch.name]);
-        console.log('query', query);
-        // await polishes
-        //   .where('addedBy', '==', auth.currentUser.uid)
-        //   .where('brand', '==', this.newBrand)
-        //   .where('name', '==', this.newName)
-        //   .get()
-        //   .then(function (result) {
-        //     query = result.docs;
-        //   });
-
-        if (this.singleSwatch.brand && this.singleSwatch.colorGroup && query) {
-          if (validFile === '' || validFile) {
-            console.log('file is valid');
-            return true;
-          }
-        }
-
-        this.errors = [];
-        document.querySelector('#brand').classList.remove('error-border');
-        document.querySelector('#color-group').classList.remove('error-border');
-        document.querySelector('#pic').classList.remove('error-border');
-        document.querySelector('#item-name').classList.remove('error-border');
-
-        if (!this.singleSwatch.brand) {
-          this.errors.push('Brand name is required.');
-          document.querySelector('#brand').classList.add('error-border');
-        }
-        if (!this.singleSwatch.colorGroup) {
-          this.errors.push('Color group selection is required.');
-          document.querySelector('#color-group').classList.add('error-border');
-        }
-        if (validFile === false) {
-          this.errors.push('Please add a file that ends in .jpg, .jpeg, or .png.');
-          document.querySelector('#pic').classList.add('error-border');
-        }
-        if (query === false) {
-          this.errors.push(
-            'It looks like an item with this name from this brand already exists in your collection! Please double check your info or go back to the full collection to verify.'
-          );
-          document.querySelector('#item-name').classList.add('error-border');
-        }
-
-        return false;
       },
     },
   };
