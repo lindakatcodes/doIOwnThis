@@ -1,12 +1,13 @@
 <template>
   <div class="header">
     <div class="titleBlock">
-      <h1 class="title">Do I Own This?</h1>
+      <router-link :to="{ name: 'Home' }" class="title"><h1>Do I Own This?</h1></router-link>
       <p class="subtitle">View your collection anywhere!</p>
     </div>
     <div v-if="!signedIn" class="signInBlock">
       <button class="toggleSignIn" type="button" @click="login">
-        Sign in w/ Google
+        Sign in / <br />
+        Create Account
       </button>
     </div>
     <div v-if="signedIn" class="signInBlock">
@@ -19,8 +20,7 @@
 </template>
 
 <script>
-  import firebase from 'firebase/app';
-  import { auth } from '../../firebaseConfig';
+  import { auth, ui, uiConfig } from '../../firebaseConfig';
 
   export default {
     data() {
@@ -38,13 +38,12 @@
     },
     created() {
       auth.onAuthStateChanged((user) => {
-        // console.debug('Callback context for created', this)
         if (user) {
           this.userId = user.uid;
           this.name = user.displayName;
           this.signedIn = true;
           console.log('User data pulled');
-          this.$store.commit('setCurrentUser', user);
+          this.$store.commit('SET_CURRENT_USER', user);
           console.log('Successfully signed in!');
         } else {
           console.log('No user detected.');
@@ -52,18 +51,24 @@
         }
       });
     },
+    mounted() {
+      // if (ui.isPendingRedirect()) {
+      //   ui.start('.header', uiConfig);
+      // }
+    },
     methods: {
       login() {
-        // console.debug('Callback context login', this)
-        const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithRedirect(provider);
+        // auth.signInWithRedirect(provider);
+        this.$router.push({
+          name: 'login',
+        });
       },
       logout() {
         auth
           .signOut()
           .then(() => {
             console.log('Successfully signed out');
-            this.$store.commit('unsetCurrentUser');
+            this.$store.commit('UNSET_CURRENT_USER');
           })
           .catch(function (error) {
             console.error('Error signing out', error);
@@ -88,8 +93,21 @@
     color: var(--light-font-color);
   }
 
+  .title {
+    color: var(--light-font-color);
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.95rem;
+  }
+
   .subtitle {
     margin-bottom: 5%;
+  }
+
+  .signInBlock {
+    width: 35%;
   }
 
   .signInBlock p {
