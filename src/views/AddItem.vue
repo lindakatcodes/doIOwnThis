@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 <template>
   <div class="add-item-page">
     <router-link :to="{ name: 'Home' }" class="cancel">← Cancel</router-link>
@@ -45,7 +46,7 @@
       <input id="style" v-model.trim="singleSwatch.finish" type="text" placeholder="Matte, Gloss, Gel, Texture" />
 
       <label class="form-label" for="pic">Pick a picture to show the color (recommended)</label>
-      <input id="pic" ref="newImage" type="file" accept=".jpg, .png, .jpeg" />
+      <input id="pic" type="file" accept=".jpg, .png, .jpeg" />
       <!-- ToDo - on submit, redirect to home page w/ success message on success; show errors and stay on page if errors -->
       <div class="newItemCheck">
         <input id="addAnother" class="addCheckbox" name="addNewItem" type="checkbox" />
@@ -58,11 +59,8 @@
 </template>
 
 <script>
-  // import { db, auth, storage, timestamp } from '../../firebaseConfig';
   import { mapActions } from 'vuex';
   import formValidation from '../mixins/formValidation';
-
-  // const polishes = db.collection('nailPolish');
 
   export default {
     mixins: [formValidation],
@@ -89,7 +87,6 @@
         // store a few things we'll need in variables
         // first, easy access to a file (if provided) & add new item check
         const file = formData[5].files[0];
-        console.log(file);
         const addNew = formData[6].checked;
 
         // then, a handful of query selectors
@@ -122,13 +119,12 @@
         if (validated) {
           // first, add the photo to storage and add the photo data to our local data
           if (file) {
-            await this.savePhoto(file).then((imageData) => {
-              console.log('image saved', imageData);
-              this.singleSwatch.image = imageData.url;
-              this.singleSwatch.storageUri = imageData.storageUri;
-            });
+            const imageInfo = await this.savePhoto(file);
+
+            this.singleSwatch.image = imageInfo[0];
+            this.singleSwatch.storageUri = imageInfo[1];
           }
-          console.log('current data: ', this.singleSwatch);
+
           // then, add the new data to db
           this.addSwatchToDb(this.singleSwatch)
             .then(() => {

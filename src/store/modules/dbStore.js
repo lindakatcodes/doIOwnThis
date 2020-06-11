@@ -37,24 +37,25 @@ export default {
   },
   actions: {
     // get allSwatches
-    getAllSwatches({ commit, rootState }) {
-      commit('CLEAR_SWATCHES');
-      const buildSwatches = [];
+    getAllSwatches({ state, commit, rootState }) {
+      if (state.allSwatches.length === 0) {
+        const buildSwatches = [];
 
-      db.collection('nailPolish')
-        .where('addedBy', '==', rootState.currentUser.userId)
-        .orderBy('lastUpdated', 'desc')
-        .get()
-        .then(function (querySnapshot) {
-          querySnapshot.forEach(function (doc) {
-            const currSwatch = doc.data();
-            currSwatch.id = doc.id;
-            buildSwatches.push(currSwatch);
+        db.collection('nailPolish')
+          .where('addedBy', '==', rootState.currentUser.userId)
+          .orderBy('lastUpdated', 'desc')
+          .get()
+          .then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+              const currSwatch = doc.data();
+              currSwatch.id = doc.id;
+              buildSwatches.push(currSwatch);
+            });
+          })
+          .then(() => {
+            commit('BUILD_SWATCHES', buildSwatches);
           });
-        })
-        .then(() => {
-          commit('BUILD_SWATCHES', buildSwatches);
-        });
+      }
     },
     // search allSwatches for provided term
     searchSwatches({ commit, rootState }, searchProp, searchTerm) {
@@ -92,12 +93,15 @@ export default {
           singleSwatch.id = docRef.id;
         })
         .then(() => {
-          commit('ADD_NEW_SWATCH', singleSwatch);
+          const swatchExists = this.getSingleSwatch(singleSwatch.id);
+          if (!swatchExists) {
+            commit('ADD_NEW_SWATCH', singleSwatch);
+          }
         });
     },
     // update single swatch with edit form data
     updateExistingSwatch({ commit }, updatedSwatch) {
-      db.collection('nailPolish').update({
+      db.collection('nailPolish').doc(updatedSwatch.id).update({
         name: updatedSwatch.name,
         brand: updatedSwatch.brand,
         subBrand: updatedSwatch.subBrand,

@@ -6,21 +6,24 @@ export default {
   mutations: {},
   actions: {
     // save new file & return url & storage path
-    saveNewPhoto({ rootState }, file) {
-      const imageData = {};
+    async saveNewPhoto({ rootState }, file) {
+      let imageUrl = '';
+      let imagePath = '';
       const filePath = `${rootState.currentUser.userId}/${file.name}`;
-      storage
+      await storage
         .ref(filePath)
         .put(file)
         .then(function (fileSnapshot) {
           return fileSnapshot.ref.getDownloadURL().then((url) => {
-            imageData.url = url;
-            imageData.storageUri = fileSnapshot.metadata.fullPath;
+            imageUrl = url;
+            imagePath = fileSnapshot.metadata.fullPath;
+            // console.log('inside function: ', imageUrl, imagePath);
           });
         })
         .catch((error) => {
           console.log('error saving image ', error);
         });
+      const imageData = [imageUrl, imagePath];
       return imageData;
     },
 
