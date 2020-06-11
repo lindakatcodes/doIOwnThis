@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="titleBlock">
-      <router-link :to="{ name: 'Home' }" class="title"><h1>Do I Own This?</h1></router-link>
+      <router-link :to="{ name: 'home' }" class="title"><h1>Do I Own This?</h1></router-link>
       <p class="subtitle">View your collection anywhere!</p>
     </div>
     <div v-if="!signedIn" class="signInBlock">
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-  import { auth, ui, uiConfig } from '../../firebaseConfig';
+  import { auth } from '../../firebaseConfig';
 
   export default {
     data() {
@@ -51,14 +51,8 @@
         }
       });
     },
-    mounted() {
-      // if (ui.isPendingRedirect()) {
-      //   ui.start('.header', uiConfig);
-      // }
-    },
     methods: {
       login() {
-        // auth.signInWithRedirect(provider);
         this.$router.push({
           name: 'login',
         });

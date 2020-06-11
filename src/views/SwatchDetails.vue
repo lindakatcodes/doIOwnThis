@@ -1,6 +1,6 @@
 <template>
   <section>
-    <router-link :to="{ name: 'Home' }" class="back">← Back to All Items</router-link>
+    <router-link :to="{ name: 'home' }" class="back">← Back to All Items</router-link>
     <div class="swatchWrapper">
       <img :src="swatch.image" class="swatchImage" />
       <h2 class="swatchName">{{ swatch.name }}</h2>

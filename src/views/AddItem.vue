@@ -1,7 +1,7 @@
 /* eslint-disable prefer-destructuring */
 <template>
   <div class="add-item-page">
-    <router-link :to="{ name: 'Home' }" class="cancel">← Cancel</router-link>
+    <router-link :to="{ name: 'home' }" class="cancel">← Cancel</router-link>
     <h2 class="title">
       Woohoo, new stuff! <br />
       Let's add it to your collection!
