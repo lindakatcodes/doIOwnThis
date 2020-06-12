@@ -45,7 +45,7 @@
         <br />
         (if not, your current picture will still be saved)
       </label>
-      <input id="pic" type="file" accept=".jpg, .png, .jpeg" />
+      <input id="pic" type="file" accept="image/*, .jpg, .png, .jpeg" capture="environment" />
       <button class="edit-item-button" type="submit">CONFIRM EDITS</button>
     </form>
   </div>

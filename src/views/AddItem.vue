@@ -46,7 +46,7 @@
       <input id="style" v-model.trim="singleSwatch.finish" type="text" placeholder="Matte, Gloss, Gel, Texture" />
 
       <label class="form-label" for="pic">Pick a picture to show the color (recommended)</label>
-      <input id="pic" type="file" accept=".jpg, .png, .jpeg" />
+      <input id="pic" type="file" accept="image/*, .jpg, .png, .jpeg" capture="environment" />
       <!-- ToDo - on submit, redirect to home page w/ success message on success; show errors and stay on page if errors -->
       <div class="newItemCheck">
         <input id="addAnother" class="addCheckbox" name="addNewItem" type="checkbox" />
