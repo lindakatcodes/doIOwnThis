@@ -26,8 +26,8 @@
       </table>
     </div>
     <div class="adjustments">
-      <button class="edit" @click="editItem">Edit Item Details</button>
-      <button class="delete" @click="deleteItem">Delete This Item</button>
+      <button class="edit" @click="editItem">EDIT ITEM DETAILS</button>
+      <button class="delete" @click="deleteItem">DELETE THIS ITEM</button>
     </div>
   </section>
 </template>
@@ -68,19 +68,29 @@
         if (photoToRemove) {
           this.deletePhoto(photoToRemove)
             .then(() => {
-              console.log('Photo deleted successfully!');
+              this.$toasted.global.successToast({
+                message: 'Photo removed from storage successfully.',
+              });
             })
             .catch(function (error) {
-              console.log('Problem deleting photo ', error);
+              this.$toasted.global.errorToast({
+                message: `Problem deleting photo for this item: ${error}`,
+              });
             });
         }
         this.deleteFile(this.$attrs.id)
           .then(() => {
-            console.log('Item deleted successfully!');
-            this.$router.push({ name: 'Home' });
+            this.$toasted.global.successToast({
+              message: 'This item has been removed!',
+            });
+          })
+          .then(() => {
+            this.$router.push({ name: 'home' });
           })
           .catch(function (error) {
-            console.log('Problem deleting file ', error);
+            this.$toasted.global.errorToast({
+              message: `Hmm, something happened while deleting this item: ${error}`,
+            });
           });
       },
     },
@@ -95,7 +105,8 @@
 
   .back {
     color: var(--dark-font-color);
-    font-weight: 600;
+    font-family: var(--serif);
+    font-weight: 700;
     margin-left: 3%;
     padding: 1% 2%;
     text-decoration: none;
@@ -125,6 +136,7 @@
 
   .swatchName {
     width: 80%;
+    font-family: var(--serif);
     text-align: center;
     text-transform: capitalize;
   }
@@ -141,9 +153,11 @@
   .label {
     text-transform: uppercase;
     font-size: 0.8rem;
-    font-weight: bold;
+    letter-spacing: 0.025rem;
+    font-weight: 700;
     width: 40%;
     text-align: right;
+    vertical-align: bottom;
   }
 
   .info {
@@ -158,10 +172,15 @@
 
   button {
     padding: 3%;
+    width: 40%;
     border-radius: 7px;
     border: none;
     box-shadow: 3px 3px 7px 0 var(--dark-bg);
     cursor: pointer;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.025rem;
   }
 
   .edit {

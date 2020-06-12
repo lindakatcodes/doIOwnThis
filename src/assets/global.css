@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import url('https://fonts.googleapis.com/css2?family=Laila:wght@400;700&family=Source+Sans+Pro:wght@400;700&display=swap');
+
 :root {
   --dark-bg: #151e2c;
   --light-bg: #9b9da7;
@@ -5,8 +8,14 @@
   --light-font-color: #f8f8f8;
   --accent: #e9a8a8;
   --dark-accent: #9e1e1e;
+  --serif: 'Laila', serif;
+  --sans-serif: 'Source Sans Pro', sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6, p {
   margin: 3%;
+}
+
+.closeToast i {
+  color: var(--accent);
 }

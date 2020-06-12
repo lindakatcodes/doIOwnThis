@@ -1,5 +1,7 @@
 <template>
-  <div id="auth-container"></div>
+  <div class="auth-wrapper">
+    <div id="auth-container"></div>
+  </div>
 </template>
 
 <script>
@@ -16,4 +18,12 @@
   };
 </script>
 
-<style scoped></style>
+<style scoped>
+  .auth-wrapper {
+    border-radius: 7px;
+    width: 85%;
+    margin: 3% auto;
+    background: var(--dark-bg);
+    padding: 3% 0;
+  }
+</style>

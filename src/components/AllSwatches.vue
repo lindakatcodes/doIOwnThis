@@ -22,9 +22,11 @@
       }),
     },
     mounted() {
-      this.getAllSwatches()
-        .then(() => console.log('Succesfully received swatch data'))
-        .catch((error) => console.error('Could not get all swatch data ', error));
+      this.getAllSwatches().catch((error) => {
+        this.$toasted.global.errorToast({
+          message: `Couldn't load swatches: ${error}`,
+        });
+      });
     },
     methods: {
       ...mapActions({
@@ -36,7 +38,7 @@
 
 <style scoped>
   p {
-    margin-top: 3%;
+    margin-top: 5%;
     text-align: center;
   }
 

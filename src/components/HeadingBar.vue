@@ -2,18 +2,18 @@
   <div class="header">
     <div class="titleBlock">
       <router-link :to="{ name: 'home' }" class="title"><h1>Do I Own This?</h1></router-link>
-      <p class="subtitle">View your collection anywhere!</p>
+      <p class="subtitle">Your collection in your pocket!</p>
     </div>
     <div v-if="!signedIn" class="signInBlock">
       <button class="toggleSignIn" type="button" @click="login">
-        Sign in / <br />
-        Create Account
+        SIGN IN / <br />
+        SIGN UP
       </button>
     </div>
-    <div v-if="signedIn" class="signInBlock">
+    <div v-if="signedIn" class="signOutBlock">
       <p>Hi {{ getFirstName }}!</p>
       <button class="toggleSignIn" type="button" @click="logout">
-        Sign Out
+        SIGN OUT
       </button>
     </div>
   </div>
@@ -42,11 +42,8 @@
           this.userId = user.uid;
           this.name = user.displayName;
           this.signedIn = true;
-          console.log('User data pulled');
           this.$store.commit('SET_CURRENT_USER', user);
-          console.log('Successfully signed in!');
         } else {
-          console.log('No user detected.');
           this.signedIn = false;
         }
       });
@@ -61,11 +58,12 @@
         auth
           .signOut()
           .then(() => {
-            console.log('Successfully signed out');
             this.$store.commit('UNSET_CURRENT_USER');
           })
           .catch(function (error) {
-            console.error('Error signing out', error);
+            this.$toasted.global.errorToast({
+              message: `Trouble signing you out: ${error}`,
+            });
           });
       },
     },
@@ -75,11 +73,10 @@
 <style scoped>
   .header {
     width: 100%;
-    padding: 1% 0 4%;
+    padding: 2% 0;
     background: var(--dark-bg);
     display: flex;
     justify-content: space-around;
-    align-items: center;
   }
 
   .titleBlock {
@@ -93,22 +90,33 @@
   }
 
   .title h1 {
-    font-size: 1.95rem;
+    font-size: 1.8rem;
+    font-family: var(--serif);
+    text-align: center;
   }
 
   .subtitle {
     margin-bottom: 5%;
+    text-align: center;
   }
 
   .signInBlock {
-    width: 35%;
+    width: 25%;
+    align-self: center;
   }
 
-  .signInBlock p {
+  .signOutBlock {
+    width: 25%;
+    align-self: stretch;
+  }
+
+  .signOutBlock p {
     margin: 8% 0;
     font-size: 1.1rem;
     color: var(--accent);
     text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.05rem;
   }
 
   .toggleSignIn {
@@ -116,5 +124,8 @@
     padding: 5px;
     background: var(--light-bg);
     border-radius: 5px;
+    font-weight: 700;
+    letter-spacing: 0.05rem;
+    font-size: 0.9rem;
   }
 </style>

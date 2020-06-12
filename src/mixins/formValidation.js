@@ -45,7 +45,7 @@ export default {
       const fullWord = firstLetter + restOfWord;
       return fullWord;
     },
-    async validateForm(data, photoFile, errors, selectors) {
+    async validateForm(data, photoFile, errors, selectors, type) {
       let formIsValid = false;
       // first, check if an item w/ same brand & name already exists - prevent duplicates
       const docExists = await this.checkSwatchExists(data.brand, data.name);
@@ -60,9 +60,13 @@ export default {
       if (data.brand && data.name && data.colorGroup) {
         // alright, now if we have a photo file, make sure it's a valid one - good to continue if validPhoto = true or a blank string (meaning no photo)
         if (validPhoto === '' || validPhoto === true) {
-          // then, make sure our data doesn't already exist
+          // then, make sure our data doesn't already exist if we're adding a new item or if we've changed the name or brand with an edit
           if (!docExists) {
             // we're all good!
+            formIsValid = true;
+          }
+          // if we're editing, it should already exist anyways
+          if (docExists && type === 'edit') {
             formIsValid = true;
           }
         }
@@ -85,7 +89,7 @@ export default {
         this.errors.push('Please add a file that ends in .jpg, .jpeg, or .png, and is below 5MB in size.');
         selectors.photo.classList.add('error-border');
       }
-      if (docExists) {
+      if (docExists && type === 'add') {
         this.errors.push(
           'It looks like an item with this name and brand already exists in your collection! Please double check your info or go back to the full collection to verify.'
         );

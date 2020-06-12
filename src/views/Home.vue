@@ -63,8 +63,9 @@
 
   .add-new-link {
     color: var(--dark-font-color);
-    font-weight: 600;
-    margin-left: 15%;
+    font-family: var(--serif);
+    font-weight: 700;
+    margin-left: 12%;
     padding: 1% 2%;
     text-decoration: none;
     background-image: linear-gradient(0deg, var(--accent) 0, var(--accent) 35%, transparent 0, transparent);

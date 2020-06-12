@@ -25,7 +25,7 @@
       <label class="form-label" for="item-name">Name of color <span class="required">*</span></label>
       <input id="item-name" v-model.trim="singleSwatch.name" type="text" placeholder="Mint Apple, Apartment for Two, etc" />
 
-      <label class="form-label" for="color-group">What color is it? <span class="required">*</span></label>
+      <label class="form-label" for="color-group">What color group does it best belong to? <span class="required">*</span></label>
       <select id="color-group" v-model="singleSwatch.colorGroup" name="colorGroup">
         <option value="">Select which option it's closest to:</option>
         <option value="base">Basics (Base/Top Coat, Strengthener)</option>
@@ -90,7 +90,6 @@
         const addNew = formData[6].checked;
 
         // then, a handful of query selectors
-        const formSelector = document.querySelector('.add-item-form');
         const brandSelector = document.querySelector('#brand');
         const nameSelector = document.querySelector('#item-name');
         const colorSelector = document.querySelector('#color-group');
@@ -111,9 +110,8 @@
         selectors.color.classList.remove('error-border');
         selectors.photo.classList.remove('error-border');
 
-        const validatedResult = await this.validateForm(this.singleSwatch, file, this.errors, selectors);
+        const validatedResult = await this.validateForm(this.singleSwatch, file, this.errors, selectors, 'add');
         const validated = validatedResult[0];
-        console.log('valid form status: ', validated);
 
         // if validation passes, we're good to add to our db!
         if (validated) {
@@ -128,17 +126,25 @@
           // then, add the new data to db
           this.addSwatchToDb(this.singleSwatch)
             .then(() => {
-              console.log('Item successfully added to your collection!');
+              this.$toasted.global.successToast({
+                message: 'Item was added successfully!',
+              });
+            })
+            .then(() => {
               if (addNew) {
-                formSelector.reset();
+                this.$router.replace({
+                  name: 'add-new',
+                });
               } else {
                 this.$router.push({
-                  name: 'Home',
+                  name: 'home',
                 });
               }
             })
             .catch(function (error) {
-              console.error('Problem adding your data: ', error);
+              this.$toasted.global.errorToast({
+                message: `Hmm, something went wrong trying to add your item: ${error}`,
+              });
             });
         }
       },
@@ -153,7 +159,8 @@
 
   .cancel {
     color: var(--dark-font-color);
-    font-weight: 600;
+    font-family: var(--serif);
+    font-weight: 700;
     padding: 1% 2%;
     text-decoration: none;
     background-image: linear-gradient(0deg, var(--accent) 0, var(--accent) 35%, transparent 0, transparent);
@@ -166,6 +173,7 @@
 
   .title {
     text-align: center;
+    font-family: var(--serif);
     color: var(--dark-font-color);
   }
 
@@ -178,6 +186,9 @@
   .form-label {
     color: var(--dark-font-color);
     margin-bottom: 1%;
+    margin-left: 1%;
+    font-size: 0.9rem;
+    line-height: 1.1rem;
   }
 
   input,
@@ -198,8 +209,11 @@
 
   .newItemCheck {
     margin-left: 7%;
-    margin-bottom: 2%;
+    margin-bottom: 3%;
     width: 85%;
+  }
+
+  .addCheckLabel {
     font-size: 1.05rem;
   }
 
@@ -215,11 +229,16 @@
     color: var(--dark-font-color);
     border-color: var(--light-bg);
     align-self: center;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.025rem;
+    line-height: 1.1rem;
   }
 
   .required {
     color: var(--dark-accent);
-    font-size: 1.1rem;
+    font-size: 1.3rem;
   }
 
   .error {

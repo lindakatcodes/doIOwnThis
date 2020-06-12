@@ -93,10 +93,10 @@ export default {
           singleSwatch.id = docRef.id;
         })
         .then(() => {
-          const swatchExists = this.getSingleSwatch(singleSwatch.id);
-          if (!swatchExists) {
-            commit('ADD_NEW_SWATCH', singleSwatch);
-          }
+          // const swatchExists = this.getSingleSwatch(singleSwatch.id);
+          // if (!swatchExists) {
+          commit('ADD_NEW_SWATCH', singleSwatch);
+          // }
         });
     },
     // update single swatch with edit form data

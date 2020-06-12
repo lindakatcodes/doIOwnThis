@@ -11,16 +11,16 @@
       </ul>
     </div>
     <form class="edit-item-form" enctype="multipart/form-data" method="post" @submit.prevent="editPolish($event.target)">
-      <label class="form-label" for="brand">Brand name </label>
+      <label class="form-label" for="brand">Brand Name <span class="required">*</span></label>
       <input id="brand" v-model.trim="singleSwatch.brand" type="text" placeholder="Sally Hansen, Essie, etc" />
 
       <label class="form-label" for="sub-brand">Is there a sub-brand or collection name?</label>
       <input id="sub-brand" v-model.trim="singleSwatch.subBrand" type="text" placeholder="Insta-Dri, PixieDust, etc" />
 
-      <label class="form-label" for="item-name">Name of color</label>
+      <label class="form-label" for="item-name">Name of color <span class="required">*</span></label>
       <input id="item-name" v-model.trim="singleSwatch.name" type="text" placeholder="Mint Apple, Apartment for Two, etc" />
 
-      <label class="form-label" for="color-group">What color is it?</label>
+      <label class="form-label" for="color-group">What color group does it best belong to? <span class="required">*</span></label>
       <select id="color-group" v-model="singleSwatch.colorGroup" name="colorGroup">
         <option value="">Select which option it's closest to:</option>
         <option value="base">Basics (Base/Top Coat, Strengthener)</option>
@@ -40,17 +40,18 @@
       <label class="form-label" for="style">What kind of finish does it have?</label>
       <input id="style" v-model.trim="singleSwatch.finish" type="text" placeholder="Matte, Gloss, Gel, Texture" />
 
-      <label class="form-label" for="pic">Pick a new picture if desired</label>
+      <label class="form-label" for="pic">
+        Pick a new picture, if desired
+        <br />
+        (if not, your current picture will still be saved)
+      </label>
       <input id="pic" type="file" accept=".jpg, .png, .jpeg" />
-      <button class="edit-item-button" type="submit">Confirm Edits</button>
+      <button class="edit-item-button" type="submit">CONFIRM EDITS</button>
     </form>
   </div>
 </template>
 
 <script>
-  // import { db, auth, storage, timestamp } from '../../firebaseConfig';
-  // const polishes = db.collection('nailPolish');
-
   import { mapGetters, mapActions } from 'vuex';
   import formValidation from '../mixins/formValidation';
 
@@ -122,17 +123,16 @@
         selectors.color.classList.remove('error-border');
         selectors.photo.classList.remove('error-border');
 
-        const validatedResult = await this.validateForm(this.singleSwatch, file, this.errors, selectors);
+        const validatedResult = await this.validateForm(this.singleSwatch, file, this.errors, selectors, 'edit');
         const validated = validatedResult[0];
-        console.log('valid form status: ', validated);
 
         // if validation passes, we're good to update the data
         if (validated) {
           // if there's a photo already, we'll need to delete the old one, then add the new one
           if (file) {
             const oldFilePath = this.singleSwatch.storageUri;
-            // only attempt removal if there was an old file path - not needed if it's already blank
-            if (oldFilePath !== '') {
+            // only attempt removal if there was an old file path - not needed if it's already blank or undefined
+            if (oldFilePath !== '' && oldFilePath !== undefined) {
               this.removePhoto(oldFilePath);
             }
 
@@ -144,99 +144,21 @@
           // then, update the db with the new data
           this.updateSwatch(this.singleSwatch)
             .then(() => {
-              console.log('Item successfully updated!');
+              this.$toasted.global.successToast({
+                message: 'Your item has been updated!',
+              });
+            })
+            .then(() => {
               this.$router.push({
-                name: 'Home',
+                name: 'home',
               });
             })
             .catch(function (error) {
-              console.error('Problem adding your data: ', error);
+              this.$toasted.global.errorToast({
+                message: `Something went wrong while editing your data: ${error}`,
+              });
             });
         }
-
-        //   const file = formData[5].files[0];
-        //   let validFile = '';
-        //   const itemRef = polishes.doc(this.$attrs.id);
-        //   const thisRef = this;
-        //   if (file) {
-        //     validFile = this.validateFile(file);
-        //   }
-        //   const validated = this.validForm(validFile);
-        //   if (validated) {
-        //     itemRef
-        //       .update({
-        //         brand: this.Brand,
-        //         subBrand: this.SubBrand,
-        //         name: this.Name,
-        //         colorGroup: this.ColorGroup,
-        //         finish: this.Finish,
-        //         lastUpdated: timestamp,
-        //       })
-        //       .then(function () {
-        //         if (validFile) {
-        //           // first, remove the current file from storage
-        //           const fileToRemove = thisRef.imageStoragePath;
-        //           storage
-        //             .ref(fileToRemove)
-        //             .delete()
-        //             .then(function () {
-        //               console.log('Old file removed from storage');
-        //             })
-        //             .catch(function (error) {
-        //               console.log('Problem removing old file: ', error);
-        //             });
-        //           // then, add the new file
-        //           const filePath = `${auth.currentUser.uid}/${file.name}`;
-        //           storage
-        //             .ref(filePath)
-        //             .put(file)
-        //             .then(function (fileSnapshot) {
-        //               return fileSnapshot.ref.getDownloadURL().then((url) => {
-        //                 itemRef.update({
-        //                   image: url,
-        //                   storageUri: fileSnapshot.metadata.fullPath,
-        //                 });
-        //               });
-        //             });
-        //         }
-        //       })
-        //       .then(() => {
-        //         console.log('Item successfully updated!');
-        //         this.$router.push({
-        //           name: 'Home',
-        //         });
-        //       })
-        //       .catch(function (error) {
-        //         console.error('Problem editing your data: ', error);
-        //       });
-        //   }
-        // },
-        // validateFile(file) {
-        //   const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-        //   return file ? validTypes.includes(file.type) : false;
-        // },
-        // validForm(validFile) {
-        //   if (this.Brand && this.ColorGroup) {
-        //     if (validFile === '' || validFile) {
-        //       return true;
-        //     }
-        //   }
-        //   this.errors = [];
-        //   document.querySelector('#brand').classList.remove('error-border');
-        //   document.querySelector('#color-group').classList.remove('error-border');
-        //   document.querySelector('#pic').classList.remove('error-border');
-        //   if (!this.Brand) {
-        //     this.errors.push('Brand name is required.');
-        //     document.querySelector('#brand').classList.add('error-border');
-        //   }
-        //   if (!this.ColorGroup) {
-        //     this.errors.push('Color group selection is required.');
-        //     document.querySelector('#color-group').classList.add('error-border');
-        //   }
-        //   if (validFile === false) {
-        //     this.errors.push('Please add a file that ends in .jpg, .jpeg, or .png.');
-        //     document.querySelector('#pic').classList.add('error-border');
-        //   }
       },
     },
   };
@@ -249,7 +171,8 @@
 
   .cancel {
     color: var(--dark-font-color);
-    font-weight: 600;
+    font-family: var(--serif);
+    font-weight: 700;
     padding: 1% 2%;
     text-decoration: none;
     background-image: linear-gradient(0deg, var(--accent) 0, var(--accent) 35%, transparent 0, transparent);
@@ -262,6 +185,7 @@
 
   .title {
     text-align: center;
+    font-family: var(--serif);
     color: var(--dark-font-color);
   }
 
@@ -274,6 +198,9 @@
   .form-label {
     color: var(--dark-font-color);
     margin-bottom: 1%;
+    margin-left: 1%;
+    font-size: 0.9rem;
+    line-height: 1.1rem;
   }
 
   input,
@@ -300,6 +227,16 @@
     color: var(--dark-font-color);
     border-color: var(--light-bg);
     align-self: center;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.025rem;
+    line-height: 1.1rem;
+  }
+
+  .required {
+    color: var(--dark-accent);
+    font-size: 1.3rem;
   }
 
   .error {
