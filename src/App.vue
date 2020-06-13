@@ -4,7 +4,7 @@
       <headingBar />
     </header>
 
-    <main class="swatches">
+    <main>
       <router-view :key="$route.fullPath" />
     </main>
   </div>
@@ -24,5 +24,6 @@
   body {
     background: var(--light-bg);
     color: var(--dark-font-color);
+    font-family: var(--sans-serif);
   }
 </style>

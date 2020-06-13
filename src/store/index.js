@@ -1,27 +1,32 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-// import firebase from '../services/firebaseConfig'
+import dbStore from './modules/dbStore';
+import storageStore from './modules/storageStore';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  modules: {
+    dbStore,
+    storageStore,
+  },
   state: {
     currentUser: {},
     signedIn: false,
   },
   mutations: {
-    setCurrentUser(state, val) {
+    SET_CURRENT_USER(state, val) {
       state.currentUser = {
         userName: val.displayName,
         userId: val.uid,
       };
       state.signedIn = true;
     },
-    unsetCurrentUser(state) {
+    UNSET_CURRENT_USER(state) {
       state.currentUser = {};
       state.signedIn = false;
     },
   },
   actions: {},
-  modules: {},
+  getters: {},
 });

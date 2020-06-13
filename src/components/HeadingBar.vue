@@ -1,25 +1,25 @@
 <template>
   <div class="header">
     <div class="titleBlock">
-      <h1 class="title">Do I Own This?</h1>
-      <p class="subtitle">View your collection anywhere!</p>
+      <router-link :to="{ name: 'home' }" class="title"><h1>Do I Own This?</h1></router-link>
+      <p class="subtitle">Your collection in your pocket!</p>
     </div>
     <div v-if="!signedIn" class="signInBlock">
       <button class="toggleSignIn" type="button" @click="login">
-        Sign in w/ Google
+        SIGN IN / <br />
+        SIGN UP
       </button>
     </div>
-    <div v-if="signedIn" class="signInBlock">
+    <div v-if="signedIn" class="signOutBlock">
       <p>Hi {{ getFirstName }}!</p>
       <button class="toggleSignIn" type="button" @click="logout">
-        Sign Out
+        SIGN OUT
       </button>
     </div>
   </div>
 </template>
 
 <script>
-  import firebase from 'firebase/app';
   import { auth } from '../../firebaseConfig';
 
   export default {
@@ -38,35 +38,32 @@
     },
     created() {
       auth.onAuthStateChanged((user) => {
-        // console.debug('Callback context for created', this)
         if (user) {
           this.userId = user.uid;
           this.name = user.displayName;
           this.signedIn = true;
-          console.log('User data pulled');
-          this.$store.commit('setCurrentUser', user);
-          console.log('Successfully signed in!');
+          this.$store.commit('SET_CURRENT_USER', user);
         } else {
-          console.log('No user detected.');
           this.signedIn = false;
         }
       });
     },
     methods: {
       login() {
-        // console.debug('Callback context login', this)
-        const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithRedirect(provider);
+        this.$router.push({
+          name: 'login',
+        });
       },
       logout() {
         auth
           .signOut()
           .then(() => {
-            console.log('Successfully signed out');
-            this.$store.commit('unsetCurrentUser');
+            this.$store.commit('UNSET_CURRENT_USER');
           })
           .catch(function (error) {
-            console.error('Error signing out', error);
+            this.$toasted.global.errorToast({
+              message: `Trouble signing you out: ${error}`,
+            });
           });
       },
     },
@@ -76,11 +73,10 @@
 <style scoped>
   .header {
     width: 100%;
-    padding: 1% 0 4%;
+    padding: 2% 0;
     background: var(--dark-bg);
     display: flex;
     justify-content: space-around;
-    align-items: center;
   }
 
   .titleBlock {
@@ -88,15 +84,39 @@
     color: var(--light-font-color);
   }
 
-  .subtitle {
-    margin-bottom: 5%;
+  .title {
+    color: var(--light-font-color);
+    text-decoration: none;
   }
 
-  .signInBlock p {
+  .title h1 {
+    font-size: 1.8rem;
+    font-family: var(--serif);
+    text-align: center;
+  }
+
+  .subtitle {
+    margin-bottom: 5%;
+    text-align: center;
+  }
+
+  .signInBlock {
+    width: 25%;
+    align-self: center;
+  }
+
+  .signOutBlock {
+    width: 25%;
+    align-self: stretch;
+  }
+
+  .signOutBlock p {
     margin: 8% 0;
     font-size: 1.1rem;
     color: var(--accent);
     text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.05rem;
   }
 
   .toggleSignIn {
@@ -104,5 +124,8 @@
     padding: 5px;
     background: var(--light-bg);
     border-radius: 5px;
+    font-weight: 700;
+    letter-spacing: 0.05rem;
+    font-size: 0.9rem;
   }
 </style>

@@ -1,6 +1,7 @@
+/* eslint-disable prefer-destructuring */
 <template>
   <div class="add-item-page">
-    <router-link :to="{ name: 'Home' }" class="cancel">← Cancel</router-link>
+    <router-link :to="{ name: 'home' }" class="cancel">← Cancel</router-link>
     <h2 class="title">
       Woohoo, new stuff! <br />
       Let's add it to your collection!
@@ -15,19 +16,17 @@
       <!-- FUTURE IDEA
       Initially show a category only, allow to pick one that already exists, or go to new page to set up a new category
       Then, once category is picked or set up, populate a form with the category's field options -->
-      <!-- TODO
-      Make a way to batch add items - select which categories are the same, then only fill out the different fields and submit all together? -->
-      <label class="form-label" for="brand">Brand name </label>
-      <input id="brand" v-model.trim="newBrand" type="text" placeholder="Sally Hansen, Essie, etc" />
+      <label class="form-label" for="brand">Brand name <span class="required">*</span> </label>
+      <input id="brand" v-model.trim="singleSwatch.brand" type="text" placeholder="Sally Hansen, Essie, etc" />
 
       <label class="form-label" for="sub-brand">Is there a sub-brand or collection name?</label>
-      <input id="sub-brand" v-model.trim="newSubBrand" type="text" placeholder="Insta-Dri, PixieDust, etc" />
+      <input id="sub-brand" v-model.trim="singleSwatch.subBrand" type="text" placeholder="Insta-Dri, PixieDust, etc" />
 
-      <label class="form-label" for="item-name">Name of color</label>
-      <input id="item-name" v-model.trim="newName" type="text" placeholder="Mint Apple, Apartment for Two, etc" />
+      <label class="form-label" for="item-name">Name of color <span class="required">*</span></label>
+      <input id="item-name" v-model.trim="singleSwatch.name" type="text" placeholder="Mint Apple, Apartment for Two, etc" />
 
-      <label class="form-label" for="color-group">What color is it?</label>
-      <select id="color-group" v-model="newColorGroup" name="colorGroup">
+      <label class="form-label" for="color-group">What color group does it best belong to? <span class="required">*</span></label>
+      <select id="color-group" v-model="singleSwatch.colorGroup" name="colorGroup">
         <option value="">Select which option it's closest to:</option>
         <option value="base">Basics (Base/Top Coat, Strengthener)</option>
         <option value="blue">Blue</option>
@@ -44,10 +43,10 @@
       </select>
 
       <label class="form-label" for="style">What kind of finish does it have?</label>
-      <input id="style" v-model.trim="newFinish" type="text" placeholder="Matte, Gloss, Gel, Texture" />
+      <input id="style" v-model.trim="singleSwatch.finish" type="text" placeholder="Matte, Gloss, Gel, Texture" />
 
-      <label class="form-label" for="pic">Pick a picture to show the color</label>
-      <input id="pic" ref="newImage" type="file" accept=".jpg, .png, .jpeg" />
+      <label class="form-label" for="pic">Pick a picture to show the color (recommended)</label>
+      <input id="pic" type="file" accept="image/*, .jpg, .png, .jpeg" capture="environment" />
       <!-- ToDo - on submit, redirect to home page w/ success message on success; show errors and stay on page if errors -->
       <div class="newItemCheck">
         <input id="addAnother" class="addCheckbox" name="addNewItem" type="checkbox" />
@@ -60,125 +59,94 @@
 </template>
 
 <script>
-  import { db, auth, storage, timestamp } from '../../firebaseConfig';
-
-  const polishes = db.collection('nailPolish');
+  import { mapActions } from 'vuex';
+  import formValidation from '../mixins/formValidation';
 
   export default {
+    mixins: [formValidation],
     data() {
       return {
-        newBrand: '',
-        newSubBrand: '',
-        newName: '',
-        newColorGroup: '',
-        newFinish: '',
-        newImage: '',
+        singleSwatch: {
+          name: '',
+          brand: '',
+          subBrand: '',
+          colorGroup: '',
+          finish: '',
+          image: '',
+          storageUri: '',
+        },
         errors: [],
       };
     },
     methods: {
+      ...mapActions({
+        addSwatchToDb: 'dbStore/addNewSwatch',
+        savePhoto: 'storageStore/saveNewPhoto',
+      }),
       async addPolish(formData) {
-        const form = document.querySelector('.add-item-form');
+        // store a few things we'll need in variables
+        // first, easy access to a file (if provided) & add new item check
         const file = formData[5].files[0];
-        let validFile = '';
         const addNew = formData[6].checked;
 
-        if (file) {
-          validFile = this.validateFile(file);
-        }
+        // then, a handful of query selectors
+        const brandSelector = document.querySelector('#brand');
+        const nameSelector = document.querySelector('#item-name');
+        const colorSelector = document.querySelector('#color-group');
+        const picSelector = document.querySelector('#pic');
 
-        const validated = await this.validForm(validFile);
+        // will also need a selectors object, to hold the fields that will need error functionality
+        const selectors = {
+          brand: brandSelector,
+          name: nameSelector,
+          color: colorSelector,
+          photo: picSelector,
+        };
 
+        // okay. first, we need to see if the form data is valid. our validation check needs a few things: the singleSwatch data, our photo file, an empty errors array, and our selectors object. it will return an array with the first item being our truthy validation, and the second item being the final errors array - will be empty if the form is valid, otherwise will contain the errors we need to push to our data's error array
+        this.errors = [];
+        selectors.brand.classList.remove('error-border');
+        selectors.name.classList.remove('error-border');
+        selectors.color.classList.remove('error-border');
+        selectors.photo.classList.remove('error-border');
+
+        const validatedResult = await this.validateForm(this.singleSwatch, file, this.errors, selectors, 'add');
+        const validated = validatedResult[0];
+
+        // if validation passes, we're good to add to our db!
         if (validated) {
-          polishes
-            .add({
-              brand: this.newBrand,
-              subBrand: this.newSubBrand,
-              name: this.newName,
-              colorGroup: this.newColorGroup,
-              finish: this.newFinish,
-              lastUpdated: timestamp,
-              addedBy: auth.currentUser.uid,
-              image: '',
-            })
-            .then(function (itemRef) {
-              if (validFile) {
-                const filePath = `${auth.currentUser.uid}/${file.name}`;
-                return storage
-                  .ref(filePath)
-                  .put(file)
-                  .then(function (fileSnapshot) {
-                    return fileSnapshot.ref.getDownloadURL().then((url) => {
-                      itemRef.update({
-                        image: url,
-                        storageUri: fileSnapshot.metadata.fullPath,
-                      });
-                    });
-                  });
-              }
+          // first, add the photo to storage and add the photo data to our local data
+          if (file) {
+            const imageInfo = await this.savePhoto(file);
+
+            this.singleSwatch.image = imageInfo[0];
+            this.singleSwatch.storageUri = imageInfo[1];
+          }
+
+          // then, add the new data to db
+          this.addSwatchToDb(this.singleSwatch)
+            .then(() => {
+              this.$toasted.global.successToast({
+                message: 'Item was added successfully!',
+              });
             })
             .then(() => {
-              console.log('Item successfully added to your collection!');
               if (addNew) {
-                form.reset();
+                this.$router.replace({
+                  name: 'add-new',
+                });
               } else {
                 this.$router.push({
-                  name: 'Home',
+                  name: 'home',
                 });
               }
             })
             .catch(function (error) {
-              console.error('Problem adding your data: ', error);
+              this.$toasted.global.errorToast({
+                message: `Hmm, something went wrong trying to add your item: ${error}`,
+              });
             });
         }
-      },
-      validateFile(file) {
-        const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-        return file ? validTypes.includes(file.type) : false;
-      },
-      async validForm(validFile) {
-        let query = [];
-        await polishes
-          .where('addedBy', '==', auth.currentUser.uid)
-          .where('brand', '==', this.newBrand)
-          .where('name', '==', this.newName)
-          .get()
-          .then(function (result) {
-            query = result.docs;
-          });
-
-        if (this.newBrand && this.newColorGroup && query.length === 0) {
-          if (validFile === '' || validFile) {
-            return true;
-          }
-        }
-
-        this.errors = [];
-        document.querySelector('#brand').classList.remove('error-border');
-        document.querySelector('#color-group').classList.remove('error-border');
-        document.querySelector('#pic').classList.remove('error-border');
-        document.querySelector('#item-name').classList.remove('error-border');
-
-        if (!this.newBrand) {
-          this.errors.push('Brand name is required.');
-          document.querySelector('#brand').classList.add('error-border');
-        }
-        if (!this.newColorGroup) {
-          this.errors.push('Color group selection is required.');
-          document.querySelector('#color-group').classList.add('error-border');
-        }
-        if (validFile === false) {
-          this.errors.push('Please add a file that ends in .jpg, .jpeg, or .png.');
-          document.querySelector('#pic').classList.add('error-border');
-        }
-        if (query.length > 0) {
-          this.errors.push(
-            'It looks like an item with this name from this brand already exists in your collection! Please double check your info or go back to the full collection to verify.'
-          );
-          document.querySelector('#item-name').classList.add('error-border');
-        }
-
-        return false;
       },
     },
   };
@@ -191,7 +159,8 @@
 
   .cancel {
     color: var(--dark-font-color);
-    font-weight: 600;
+    font-family: var(--serif);
+    font-weight: 700;
     padding: 1% 2%;
     text-decoration: none;
     background-image: linear-gradient(0deg, var(--accent) 0, var(--accent) 35%, transparent 0, transparent);
@@ -204,6 +173,7 @@
 
   .title {
     text-align: center;
+    font-family: var(--serif);
     color: var(--dark-font-color);
   }
 
@@ -216,6 +186,9 @@
   .form-label {
     color: var(--dark-font-color);
     margin-bottom: 1%;
+    margin-left: 1%;
+    font-size: 0.9rem;
+    line-height: 1.1rem;
   }
 
   input,
@@ -236,8 +209,11 @@
 
   .newItemCheck {
     margin-left: 7%;
-    margin-bottom: 2%;
+    margin-bottom: 3%;
     width: 85%;
+  }
+
+  .addCheckLabel {
     font-size: 1.05rem;
   }
 
@@ -253,6 +229,16 @@
     color: var(--dark-font-color);
     border-color: var(--light-bg);
     align-self: center;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.025rem;
+    line-height: 1.1rem;
+  }
+
+  .required {
+    color: var(--dark-accent);
+    font-size: 1.3rem;
   }
 
   .error {

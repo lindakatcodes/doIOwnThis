@@ -38,6 +38,7 @@
   .swatch-name {
     align-self: flex-start;
     margin-top: 5%;
+    margin-left: 2%;
     text-transform: capitalize;
     color: var(--dark-font-color);
   }

@@ -4,13 +4,14 @@ import Home from '../views/Home.vue';
 import AddItem from '../views/AddItem.vue';
 import SwatchDetails from '../views/SwatchDetails.vue';
 import EditItem from '../views/EditItem.vue';
+import Login from '../views/Login.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
+    name: 'home',
     component: Home,
   },
   {
@@ -30,9 +31,15 @@ const routes = [
     component: EditItem,
     props: true,
   },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login,
+  },
 ];
 
 const router = new VueRouter({
+  mode: 'history',
   routes,
 });
 
