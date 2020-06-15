@@ -30,6 +30,20 @@ export default {
     LOADING_STATE(state, value) {
       state.loading = value;
     },
+    // add new item to allSwatches
+    ADD_NEW_SWATCH(state, newSwatch) {
+      state.allSwatches.unshift(newSwatch);
+    },
+    // update single swatch in allSwatches
+    UPDATE_SWATCH(state, singleSwatch) {
+      const updatedSwatchIndex = state.allSwatches.findIndex((swatch) => swatch.id === singleSwatch.id);
+      state.allSwatches.splice(updatedSwatchIndex, 1, singleSwatch);
+    },
+    // remove deleted swatch from allSwatches
+    REMOVE_SWATCH(state, swatchId) {
+      const singleSwatchIndex = state.allSwatches.findIndex((swatch) => swatch.id === swatchId);
+      state.allSwatches.splice(singleSwatchIndex, 1);
+    },
   },
   actions: {
     // get allSwatches
@@ -102,7 +116,7 @@ export default {
       return singleDoc;
     },
     // add new single swatch
-    addNewSwatch({ rootState }, singleSwatch) {
+    addNewSwatch({ commit, rootState }, singleSwatch) {
       db.collection('nailPolish')
         .add({
           name: singleSwatch.name,
@@ -117,10 +131,13 @@ export default {
         })
         .then(function (docRef) {
           singleSwatch.id = docRef.id;
+        })
+        .then(() => {
+          commit('ADD_NEW_SWATCH', singleSwatch);
         });
     },
     // update single swatch with edit form data
-    updateExistingSwatch(context, updatedSwatch) {
+    updateExistingSwatch({ commit }, updatedSwatch) {
       db.collection('nailPolish').doc(updatedSwatch.id).update({
         name: updatedSwatch.name,
         brand: updatedSwatch.brand,
@@ -131,10 +148,16 @@ export default {
         storageUri: updatedSwatch.storageUri,
         lastUpdated: timestamp,
       });
+      commit('UPDATE_SWATCH', updatedSwatch);
     },
     // delete single swatch
-    removeSingleSwatch(context, id) {
-      db.collection('nailPolish').doc(id).delete();
+    removeSingleSwatch({ commit }, id) {
+      db.collection('nailPolish')
+        .doc(id)
+        .delete()
+        .then(() => {
+          commit('REMOVE_SWATCH', id);
+        });
     },
     titleCase(context, str) {
       const originalArray = str.split(' ');

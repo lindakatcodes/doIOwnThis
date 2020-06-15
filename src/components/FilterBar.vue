@@ -10,7 +10,7 @@
         <option value="finish">Finish</option>
         <option value="name">Name</option>
       </select>
-      <input id="category-data-select" v-model.trim="data" type="text" aria-labelledby="category-select" class="form-select" />
+      <input id="category-data-select" v-model.trim="data" type="text" aria-labelledby="category-select" class="form-input" />
       <button class="sortButton" type="submit">SEARCH</button>
     </form>
   </div>
@@ -49,20 +49,26 @@
     width: 100%;
     display: flex;
     justify-content: space-around;
-    align-items: center;
   }
 
   .form-label {
     color: var(--dark-font-color);
     font-size: 0.9rem;
     text-align: right;
-    padding-right: 0.3rem;
+    margin-right: 1%;
   }
 
   .form-select {
     width: 27vw;
     padding: 1%;
-    margin: 0 1%;
+    margin-right: 3%;
+    margin-left: 1%;
+  }
+
+  .form-input {
+    width: 27vw;
+    padding: 1%;
+    margin-right: 3%;
   }
 
   .sortButton {
@@ -73,5 +79,6 @@
     border: none;
     border-radius: 5px;
     padding: 2%;
+    margin-right: 4%;
   }
 </style>

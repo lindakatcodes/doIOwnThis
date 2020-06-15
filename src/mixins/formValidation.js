@@ -12,15 +12,14 @@ export default {
     },
     async checkSwatchExists(brand, name) {
       const nameQuery = [];
-      const capitalName = this.titleCase(name);
-      const nameVariations = [name.toLowerCase(), name.toUpperCase(), capitalName];
+      const capitalName = await this.titleCase(name);
       let foundMatch = false;
 
       // run a query that checks to see if any variation of the polish name shows up, & return those results
       await db
         .collection('nailPolish')
         .where('addedBy', '==', auth.currentUser.uid)
-        .where('name', 'in', nameVariations)
+        .where('name', '==', capitalName)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {

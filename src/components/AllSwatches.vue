@@ -75,10 +75,10 @@
   .allSwatches {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 0.25rem;
+    gap: 0 2%;
     justify-items: center;
     align-items: start;
-    margin-top: 3%;
+    margin: 3%;
     clear: both;
   }
 

@@ -92,7 +92,7 @@
       this.singleSwatch.finish = data.finish;
       this.singleSwatch.image = data.image;
       this.singleSwatch.storageUri = data.storageUri;
-      this.singleSwatch.id = data.id;
+      this.singleSwatch.id = data.id || this.$attrs.id;
     },
     methods: {
       ...mapActions({
@@ -147,10 +147,10 @@
           }
 
           // before we add the data to the db, we want to do some basic formatting to ensure our data stays clean & easy to search later
-          this.singleSwatch.name = this.titleCase(this.singleSwatch.name);
-          this.singleSwatch.brand = this.titleCase(this.singleSwatch.brand);
-          this.singleSwatch.subBrand = this.titleCase(this.singleSwatch.subBrand);
-          this.singleSwatch.finish = this.titleCase(this.singleSwatch.finish);
+          this.singleSwatch.name = await this.titleCase(this.singleSwatch.name);
+          this.singleSwatch.brand = await this.titleCase(this.singleSwatch.brand);
+          this.singleSwatch.subBrand = await this.titleCase(this.singleSwatch.subBrand);
+          this.singleSwatch.finish = await this.titleCase(this.singleSwatch.finish);
 
           // then, update the db with the new data
           this.updateSwatch(this.singleSwatch)

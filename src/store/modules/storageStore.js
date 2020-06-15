@@ -10,6 +10,7 @@ export default {
       let imageUrl = '';
       let imagePath = '';
       const filePath = `${rootState.currentUser.userId}/${file.name}`;
+
       await storage
         .ref(filePath)
         .put(file)

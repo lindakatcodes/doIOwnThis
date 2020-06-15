@@ -21,7 +21,7 @@
     width: 100px;
     height: 175px;
     margin: 3% 0;
-    padding: 6% 3%;
+    padding: 6% 1% 0;
     display: flex;
     flex-direction: column;
     align-items: center;
