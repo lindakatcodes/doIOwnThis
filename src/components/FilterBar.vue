@@ -1,65 +1,37 @@
 <template>
   <div class="container">
-    <form class="search-form">
-      <label for="category-select" class="form-label">SORT BY: </label>
-      <select id="category-select" class="form-select">
-        <option value="" @click="filters('')">First this...</option>
-        <option value="brand" @click="filters('brand')">Brand</option>
-        <option value="color-group" @click="filters('color-group')">Color Group</option>
+    <form class="search-form" @submit.prevent="getResults">
+      <label for="category-select" class="form-label">FILTER ITEMS: </label>
+      <select id="category-select" v-model="category" class="form-select">
+        <option value="">Show me...</option>
+        <option value="brand">Brand</option>
+        <option value="subBrand">Sub Brand</option>
+        <option value="colorGroup">Color Group</option>
+        <option value="finish">Finish</option>
+        <option value="name">Name</option>
       </select>
-      <select id="sub-category-select" aria-labelledby="category-select" class="form-select">
-        <option value="">...Then this</option>
-        <option v-for="(option, index) in options" :key="index" :value="option.value">{{ option.name }}</option>
-      </select>
-      <button class="sortButton" type="submit" @click.prevent="sortList($event.target)">SORT</button>
+      <input id="category-data-select" v-model.trim="data" type="text" aria-labelledby="category-select" class="form-select" />
+      <button class="sortButton" type="submit">SEARCH</button>
     </form>
   </div>
 </template>
 
 <script>
-  import { db, auth } from '../../firebaseConfig';
+  import { mapActions } from 'vuex';
 
   export default {
     data() {
       return {
-        options: [],
+        category: '',
+        data: '',
       };
     },
     methods: {
-      filters(option1) {
-        if (option1 === 'brand') {
-          this.options = [
-            {
-              name: 'Color Group',
-              value: 'color-group',
-            },
-            {
-              name: 'Sub Brand',
-              value: 'sub-brand',
-            },
-            {
-              name: 'Finish',
-              value: 'finish',
-            },
-          ];
-        } else if (option1 === 'color-group') {
-          this.options = [
-            {
-              name: 'Brand',
-              value: 'brand',
-            },
-            {
-              name: 'Finish',
-              value: 'finish',
-            },
-          ];
-        } else {
-          this.options = [];
-        }
-      },
-      sortList(options) {
-        const catOp = options.form[0].selectedOptions[0].value;
-        const subCatOp = options.form[1].selectedOptions[0].value;
+      ...mapActions({
+        getSearchResults: 'dbStore/searchSwatches',
+      }),
+      async getResults() {
+        await this.getSearchResults([this.category, this.data]);
       },
     },
   };
@@ -83,16 +55,21 @@
   .form-label {
     color: var(--dark-font-color);
     font-size: 0.9rem;
+    text-align: right;
+    padding-right: 0.3rem;
   }
 
   .form-select {
     width: 27vw;
     padding: 1%;
+    margin: 0 1%;
   }
 
   .sortButton {
     background: var(--dark-bg);
     color: var(--light-font-color);
+    font-weight: 700;
+    letter-spacing: 0.025rem;
     border: none;
     border-radius: 5px;
     padding: 2%;

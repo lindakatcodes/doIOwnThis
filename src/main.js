@@ -66,6 +66,19 @@ Vue.toasted.register(
   successOptions
 );
 
+Vue.filter('titleCase', function (str) {
+  if (!str) return '';
+
+  const originalArray = str.toString().split(' ');
+  const casedResult = [];
+  originalArray.forEach((word) => {
+    const first = word.charAt(0).toUpperCase();
+    const rest = word.slice(1).toLowerCase();
+    casedResult.push(first.concat(rest));
+  });
+  return casedResult.join(' ');
+});
+
 new Vue({
   router,
   store,

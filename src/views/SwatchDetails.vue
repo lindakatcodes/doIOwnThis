@@ -2,38 +2,41 @@
   <section>
     <router-link :to="{ name: 'home' }" class="back">← Back to All Items</router-link>
     <div class="swatchWrapper">
-      <img :src="swatch.image" class="swatchImage" />
-      <h2 class="swatchName">{{ swatch.name }}</h2>
-      <table class="swatchDetails">
-        <tr>
-          <td class="label">Brand:</td>
-          <td class="info">{{ swatch.brand }}</td>
-        </tr>
-        <tr>
-          <td class="label">Sub Brand:</td>
-          <td v-if="swatch.subBrand != ''" class="info">{{ swatch.subBrand }}</td>
-          <td v-else class="info">N/A</td>
-        </tr>
-        <tr>
-          <td class="label">Color Group:</td>
-          <td class="info">{{ swatch.colorGroup }}</td>
-        </tr>
-        <tr>
-          <td class="label">Finish:</td>
-          <td v-if="swatch.finish != ''" class="info">{{ swatch.finish }}</td>
-          <td v-else class="info">N/A</td>
-        </tr>
-      </table>
-    </div>
-    <div class="adjustments">
-      <button class="edit" @click="editItem">EDIT ITEM DETAILS</button>
-      <button class="delete" @click="deleteItem">DELETE THIS ITEM</button>
+      <img v-if="loading" src="../assets/loading.svg" alt="Loading..." class="loading" />
+      <div v-else class="swatchWrapper">
+        <img :src="swatch.image" class="swatchImage" />
+        <h2 class="swatchName">{{ swatch.name }}</h2>
+        <table class="swatchDetails">
+          <tr>
+            <td class="label">Brand:</td>
+            <td class="info">{{ swatch.brand }}</td>
+          </tr>
+          <tr>
+            <td class="label">Sub Brand:</td>
+            <td v-if="swatch.subBrand != ''" class="info">{{ swatch.subBrand }}</td>
+            <td v-else class="info">N/A</td>
+          </tr>
+          <tr>
+            <td class="label">Color Group:</td>
+            <td class="info">{{ swatch.colorGroup }}</td>
+          </tr>
+          <tr>
+            <td class="label">Finish:</td>
+            <td v-if="swatch.finish != ''" class="info">{{ swatch.finish }}</td>
+            <td v-else class="info">N/A</td>
+          </tr>
+        </table>
+        <div class="adjustments">
+          <button class="edit" @click="editItem">EDIT ITEM DETAILS</button>
+          <button class="delete" @click="deleteItem">DELETE THIS ITEM</button>
+        </div>
+      </div>
     </div>
   </section>
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapActions } from 'vuex';
 
   export default {
     data() {
@@ -42,12 +45,12 @@
       };
     },
     computed: {
-      ...mapGetters({
-        getSwatch: 'dbStore/getSingleSwatch',
+      ...mapState({
+        loading: (state) => state.dbStore.loading,
       }),
     },
-    mounted() {
-      this.swatch = this.getSwatch(this.$attrs.id);
+    async mounted() {
+      this.swatch = await this.getSwatch(this.$attrs.id);
     },
     methods: {
       editItem() {
@@ -60,6 +63,7 @@
         });
       },
       ...mapActions({
+        getSwatch: 'dbStore/getSingleSwatch',
         deleteFile: 'dbStore/removeSingleSwatch',
         deletePhoto: 'storageStore/removeOldPhoto',
       }),
@@ -116,6 +120,15 @@
   .back:hover {
     background-image: linear-gradient(0deg, var(--accent) 0, var(--accent) 45%, transparent 0, transparent);
     font-size: 1.025rem;
+  }
+
+  .loading {
+    margin: 0 auto;
+    width: 20%;
+  }
+
+  .loading img {
+    width: 85%;
   }
 
   .swatchWrapper {

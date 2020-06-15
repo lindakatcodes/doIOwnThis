@@ -28,18 +28,18 @@
       <label class="form-label" for="color-group">What color group does it best belong to? <span class="required">*</span></label>
       <select id="color-group" v-model="singleSwatch.colorGroup" name="colorGroup">
         <option value="">Select which option it's closest to:</option>
-        <option value="base">Basics (Base/Top Coat, Strengthener)</option>
-        <option value="blue">Blue</option>
-        <option value="blueGreen">Blue/Green Mix (Teal, Turquoise)</option>
-        <option value="glitter">Glitters</option>
-        <option value="green">Green</option>
-        <option value="metallic">Metallics (Gold/Silver)</option>
-        <option value="neutral">Neutrals (Black/Brown/White/Cream)</option>
-        <option value="orange">Orange</option>
-        <option value="pink">Pink</option>
-        <option value="purple">Purple</option>
-        <option value="red">Red</option>
-        <option value="yellow">Yellow</option>
+        <option value="Basic">Basics (Base/Top Coat, Strengthener)</option>
+        <option value="Blue">Blue</option>
+        <option value="Blue Green">Blue/Green Mix (Teal, Turquoise)</option>
+        <option value="Glitter">Glitters</option>
+        <option value="Green">Green</option>
+        <option value="Metallic">Metallics (Gold/Silver)</option>
+        <option value="Neutral">Neutrals (Black/Brown/White/Cream)</option>
+        <option value="Orange">Orange</option>
+        <option value="Pink">Pink</option>
+        <option value="Purple">Purple</option>
+        <option value="Red">Red</option>
+        <option value="Yellow">Yellow</option>
       </select>
 
       <label class="form-label" for="style">What kind of finish does it have?</label>
@@ -82,6 +82,7 @@
       ...mapActions({
         addSwatchToDb: 'dbStore/addNewSwatch',
         savePhoto: 'storageStore/saveNewPhoto',
+        titleCase: 'dbStore/titleCase',
       }),
       async addPolish(formData) {
         // store a few things we'll need in variables
@@ -122,6 +123,12 @@
             this.singleSwatch.image = imageInfo[0];
             this.singleSwatch.storageUri = imageInfo[1];
           }
+
+          // before we add the data to the db, we want to do some basic formatting to ensure our data stays clean & easy to search later
+          this.singleSwatch.name = this.titleCase(this.singleSwatch.name);
+          this.singleSwatch.brand = this.titleCase(this.singleSwatch.brand);
+          this.singleSwatch.subBrand = this.titleCase(this.singleSwatch.subBrand);
+          this.singleSwatch.finish = this.titleCase(this.singleSwatch.finish);
 
           // then, add the new data to db
           this.addSwatchToDb(this.singleSwatch)

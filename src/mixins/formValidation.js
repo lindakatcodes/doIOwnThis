@@ -31,7 +31,7 @@ export default {
           console.log('Error getting documents: ', error);
         });
 
-      // then, go over each one and see if any have the same brand name as the provided bran
+      // then, go over each one and see if any have the same brand name as the provided brand
       nameQuery.forEach((doc) => {
         if (doc.brand === brand) {
           foundMatch = true;
@@ -39,11 +39,15 @@ export default {
       });
       return foundMatch;
     },
-    titleCase(string) {
-      const firstLetter = string.charAt(0).toUpperCase();
-      const restOfWord = string.slice(1).toLowerCase;
-      const fullWord = firstLetter + restOfWord;
-      return fullWord;
+    titleCase(str) {
+      const originalArray = str.toString().split(' ');
+      const casedResult = [];
+      originalArray.forEach((word) => {
+        const first = word.charAt(0).toUpperCase();
+        const rest = word.slice(1).toLowerCase();
+        casedResult.push(first.concat(rest));
+      });
+      return casedResult.join(' ');
     },
     async validateForm(data, photoFile, errors, selectors, type) {
       let formIsValid = false;
