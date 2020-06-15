@@ -128,4 +128,41 @@
     letter-spacing: 0.05rem;
     font-size: 0.9rem;
   }
+
+  @media screen and (min-width: 750px) {
+    .title h1 {
+      font-size: 2.5rem;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+    }
+
+    .signOutBlock p {
+      font-size: 1.4rem;
+    }
+
+    .toggleSignIn {
+      font-size: 1.1rem;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .header {
+      padding: 0;
+    }
+
+    .subtitle {
+      margin-bottom: 4%;
+    }
+
+    .signOutBlock p {
+      margin: 10% 0;
+    }
+
+    .toggleSignIn {
+      width: 70%;
+      margin-left: 15%;
+    }
+  }
 </style>

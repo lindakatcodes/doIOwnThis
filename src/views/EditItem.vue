@@ -1,6 +1,6 @@
 <template>
   <div class="edit-item-page">
-    <router-link :to="{ name: 'single-swatch', params: { id: this.$attrs.id } }" class="cancel">← Cancel</router-link>
+    <router-link :to="{ name: 'single-swatch', params: { id: this.$attrs.id } }" class="route-link cancel">← Cancel</router-link>
     <div v-if="loading" class="loading">
       <img src="../assets/loading.svg" alt="Loading Data..." />
     </div>
@@ -181,17 +181,7 @@
   }
 
   .cancel {
-    color: var(--dark-font-color);
-    font-family: var(--serif);
-    font-weight: 700;
-    padding: 1% 2%;
-    text-decoration: none;
-    background-image: linear-gradient(0deg, var(--accent) 0, var(--accent) 35%, transparent 0, transparent);
-  }
-
-  .cancel:hover {
-    background-image: linear-gradient(0deg, var(--accent) 0, var(--accent) 45%, transparent 0, transparent);
-    font-size: 1.025rem;
+    margin-left: 3%;
   }
 
   .title {
@@ -268,5 +258,33 @@
 
   .error-border {
     border: 2px solid var(--dark-accent);
+  }
+
+  @media screen and (min-width: 750px) {
+    .form-label {
+      font-size: 1.1rem;
+    }
+
+    .edit-item-form {
+      width: 75%;
+      margin: 0 auto;
+    }
+
+    .edit-item-button {
+      font-size: 1.2rem;
+    }
+
+    .required {
+      font-size: 1.5rem;
+    }
+
+    .error {
+      margin-left: 25%;
+      font-size: 1.1rem;
+    }
+
+    .error-border {
+      border-width: 3px;
+    }
   }
 </style>

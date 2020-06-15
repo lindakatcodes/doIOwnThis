@@ -74,8 +74,9 @@
 
   .allSwatches {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 0 2%;
+    justify-content: center;
     justify-items: center;
     align-items: start;
     margin: 3%;
@@ -87,7 +88,7 @@
     font-family: var(--serif);
     font-weight: 700;
     float: right;
-    padding: 1% 2%;
+    padding: 1%;
     margin-top: 3%;
     cursor: pointer;
     text-decoration: none;
@@ -106,4 +107,34 @@
     font-weight: 700;
     font-size: 1.1rem;
   }
+
+  @media screen and (min-width: 750px) {
+    p {
+      font-size: 1.2rem;
+    }
+
+    .noResults {
+      font-size: 1.3rem;
+    }
+
+    .allSwatches {
+      grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+      gap: 0 4%;
+    }
+
+    .clearFiltered {
+      font-size: 1.3rem;
+      margin-left: 25%;
+    }
+
+    .clearFiltered:hover {
+      font-size: 1.325rem;
+    }
+  }
+  /* 
+  @media screen and (min-width: 1000px) {
+    .allSwatches {
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+  } */
 </style>

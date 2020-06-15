@@ -19,7 +19,7 @@
         </p>
       </div>
       <div v-else key="signed-in">
-        <router-link :to="{ name: 'add-new' }" class="add-new-link">Got something new? Add it here!</router-link>
+        <router-link :to="{ name: 'add-new' }" class="route-link add-new-link">Got something new? Add it here!</router-link>
         <AllSwatches></AllSwatches>
       </div>
     </div>
@@ -61,18 +61,108 @@
     color: var(--dark-font-color);
   }
 
-  .add-new-link {
+  .route-link {
+    padding: 1% 1.5%;
+    position: relative;
+    margin-left: 12%;
     color: var(--dark-font-color);
     font-family: var(--serif);
     font-weight: 700;
-    margin-left: 12%;
-    padding: 1% 2%;
     text-decoration: none;
-    background-image: linear-gradient(0deg, var(--accent) 0, var(--accent) 35%, transparent 0, transparent);
+    background-image: linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 15%,
+      var(--accent) 15%,
+      var(--accent) 40%,
+      transparent 40%,
+      transparent
+    );
+    z-index: 1;
+    transition: font-size 0.25s cubic-bezier(0.47, 0.01, 0.38, 1.01);
   }
 
-  .add-new-link:hover {
-    background-image: linear-gradient(0deg, var(--accent) 0, var(--accent) 45%, transparent 0, transparent);
+  .route-link::before {
+    position: absolute;
+    content: '';
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 15%,
+      var(--accent) 15%,
+      var(--accent) 50%,
+      transparent 50%,
+      transparent
+    );
+    z-index: -1;
+    transition: opacity 0.25s cubic-bezier(0.47, 0.01, 0.38, 1.01);
+    opacity: 0;
+  }
+
+  .route-link:hover {
     font-size: 1.025rem;
+  }
+
+  .route-link:hover::before {
+    opacity: 1;
+  }
+
+  @media screen and (min-width: 450px) {
+    .route-link {
+      margin-left: 20%;
+    }
+  }
+
+  @media screen and (min-width: 600px) {
+    .route-link {
+      margin-left: 27%;
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .route-link {
+      margin-left: 27%;
+      font-size: 1.3rem;
+      background-image: linear-gradient(
+        0deg,
+        transparent 0,
+        transparent 25%,
+        var(--accent) 25%,
+        var(--accent) 45%,
+        transparent 45%,
+        transparent
+      );
+    }
+
+    .route-link::before {
+      background-image: linear-gradient(
+        0deg,
+        transparent 0,
+        transparent 25%,
+        var(--accent) 25%,
+        var(--accent) 55%,
+        transparent 55%,
+        transparent
+      );
+    }
+
+    .route-link:hover {
+      font-size: 1.325rem;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .route-link {
+      font-size: 1.4rem;
+      margin-left: 30%;
+    }
+
+    .route-link:hover {
+      font-size: 1.425rem;
+    }
   }
 </style>

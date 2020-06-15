@@ -1,7 +1,7 @@
 /* eslint-disable prefer-destructuring */
 <template>
   <div class="add-item-page">
-    <router-link :to="{ name: 'home' }" class="cancel">← Cancel</router-link>
+    <router-link :to="{ name: 'home' }" class="route-link cancel">← Cancel</router-link>
     <h2 class="title">
       Woohoo, new stuff! <br />
       Let's add it to your collection!
@@ -165,17 +165,7 @@
   }
 
   .cancel {
-    color: var(--dark-font-color);
-    font-family: var(--serif);
-    font-weight: 700;
-    padding: 1% 2%;
-    text-decoration: none;
-    background-image: linear-gradient(0deg, var(--accent) 0, var(--accent) 35%, transparent 0, transparent);
-  }
-
-  .cancel:hover {
-    background-image: linear-gradient(0deg, var(--accent) 0, var(--accent) 45%, transparent 0, transparent);
-    font-size: 1.025rem;
+    margin-left: 3%;
   }
 
   .title {
@@ -215,7 +205,7 @@
   }
 
   .newItemCheck {
-    margin-left: 7%;
+    margin-left: 12%;
     margin-bottom: 3%;
     width: 85%;
   }
@@ -255,5 +245,41 @@
 
   .error-border {
     border: 2px solid var(--dark-accent);
+  }
+
+  @media screen and (min-width: 750px) {
+    .form-label {
+      font-size: 1.1rem;
+    }
+
+    .add-item-form {
+      width: 75%;
+      margin: 0 auto;
+    }
+
+    .newItemCheck {
+      margin-left: 23%;
+    }
+
+    .addCheckLabel {
+      font-size: 1.25rem;
+    }
+
+    .add-item-button {
+      font-size: 1.2rem;
+    }
+
+    .required {
+      font-size: 1.5rem;
+    }
+
+    .error {
+      margin-left: 25%;
+      font-size: 1.1rem;
+    }
+
+    .error-border {
+      border-width: 3px;
+    }
   }
 </style>

@@ -52,4 +52,15 @@
     text-decoration: underline var(--accent);
     text-decoration-thickness: 3px;
   }
+
+  @media screen and (min-width: 750px) {
+    .swatch {
+      width: 150px;
+      height: 225px;
+    }
+
+    .swatch-name {
+      font-size: 1.1rem;
+    }
+  }
 </style>

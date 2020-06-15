@@ -1,6 +1,6 @@
 <template>
   <section>
-    <router-link :to="{ name: 'home' }" class="back">← Back to All Items</router-link>
+    <router-link :to="{ name: 'home' }" class="route-link back">← Back to All Items</router-link>
     <div class="swatchWrapper">
       <img v-if="loading" src="../assets/loading.svg" alt="Loading..." class="loading" />
       <div v-else class="swatchWrapper">
@@ -108,18 +108,7 @@
   }
 
   .back {
-    color: var(--dark-font-color);
-    font-family: var(--serif);
-    font-weight: 700;
     margin-left: 3%;
-    padding: 1% 2%;
-    text-decoration: none;
-    background-image: linear-gradient(0deg, var(--accent) 0, var(--accent) 35%, transparent 0, transparent);
-  }
-
-  .back:hover {
-    background-image: linear-gradient(0deg, var(--accent) 0, var(--accent) 45%, transparent 0, transparent);
-    font-size: 1.025rem;
   }
 
   .loading {
@@ -203,5 +192,48 @@
   .delete {
     background: var(--dark-accent);
     color: var(--light-font-color);
+  }
+
+  @media screen and (min-width: 750px) {
+    .swatchName {
+      font-size: 1.8rem;
+    }
+
+    .swatchDetails {
+      width: 65%;
+    }
+
+    td {
+      width: 50%;
+    }
+
+    .label {
+      width: 52%;
+      font-size: 0.9rem;
+    }
+
+    .info {
+      font-size: 1.1rem;
+    }
+
+    button {
+      width: 50%;
+      font-size: 1rem;
+    }
+
+    .edit {
+      margin-right: 6%;
+      margin-left: 2%;
+    }
+
+    .delete {
+      margin-left: 2%;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .swatchWrapper {
+      margin-top: 3.5%;
+    }
   }
 </style>

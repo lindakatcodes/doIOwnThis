@@ -26,4 +26,10 @@
     background: var(--dark-bg);
     padding: 3% 0;
   }
+
+  @media screen and (min-width: 750px) {
+    .auth-wrapper {
+      width: 100%;
+    }
+  }
 </style>

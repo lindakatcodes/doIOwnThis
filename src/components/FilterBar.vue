@@ -61,14 +61,14 @@
   .form-select {
     width: 27vw;
     padding: 1%;
-    margin-right: 3%;
+    margin-right: 2%;
     margin-left: 1%;
   }
 
   .form-input {
     width: 27vw;
     padding: 1%;
-    margin-right: 3%;
+    margin-right: 2%;
   }
 
   .sortButton {
@@ -79,6 +79,30 @@
     border: none;
     border-radius: 5px;
     padding: 2%;
-    margin-right: 4%;
+    margin-right: 2%;
+  }
+
+  @media screen and (min-width: 750px) {
+    .form-label {
+      font-size: 1.1rem;
+      align-self: center;
+      width: 10vw;
+    }
+
+    .form-select,
+    .form-input {
+      width: 29vw;
+      font-size: 1.1rem;
+    }
+
+    .sortButton {
+      width: 20vw;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .container {
+      padding: 1.5% 0;
+    }
   }
 </style>
