@@ -84,6 +84,15 @@
         savePhoto: 'storageStore/saveNewPhoto',
         titleCase: 'dbStore/titleCase',
       }),
+      clearItem() {
+        this.singleSwatch.name = '';
+        this.singleSwatch.brand = '';
+        this.singleSwatch.subBrand = '';
+        this.singleSwatch.colorGroup = '';
+        this.singleSwatch.finish = '';
+        this.singleSwatch.image = '';
+        this.singleSwatch.storageUri = '';
+      },
       async addPolish(formData) {
         // store a few things we'll need in variables
         // first, easy access to a file (if provided) & add new item check
@@ -139,9 +148,7 @@
             })
             .then(() => {
               if (addNew) {
-                this.$router.replace({
-                  name: 'add-new',
-                });
+                this.clearItem();
               } else {
                 this.$router.push({
                   name: 'home',

@@ -10,7 +10,7 @@ import 'firebase/storage';
 // firebase init goes here
 const config = {
   apiKey: process.env.VUE_APP_API_KEY,
-  authDomain: 'doiownthis.firebaseapp.com',
+  authDomain: 'doiownthis.netlify.app',
   databaseURL: 'https://doiownthis.firebaseio.com',
   projectId: 'doiownthis',
   storageBucket: 'doiownthis.appspot.com',
@@ -29,7 +29,7 @@ export const provider = new firebase.auth.GoogleAuthProvider();
 
 export const uiConfig = {
   callbacks: {
-    signInSuccessWithAuthResult(authResult, redirectUrl) {
+    signInSuccessWithAuthResult() {
       // User successfully signed in.
       // Return type determines whether we continue the redirect automatically
       // or whether we leave that to developer to handle.
