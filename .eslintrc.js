@@ -17,6 +17,7 @@ module.exports = {
   settings: {
     'import/resolver': 'webpack',
   },
+  ignorePatterns: ['/dist'],
   rules: {
     'no-debugger': 0,
     'no-alert': 0,
