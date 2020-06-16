@@ -49,7 +49,7 @@
       <input id="pic" type="file" accept="image/*, .jpg, .png, .jpeg" capture="environment" />
       <!-- ToDo - on submit, redirect to home page w/ success message on success; show errors and stay on page if errors -->
       <div class="newItemCheck">
-        <input id="addAnother" class="addCheckbox" name="addNewItem" type="checkbox" />
+        <input id="addAnother" class="addCheckbox" name="addNewItem" type="checkbox" autocomplete="off" />
         <label class="form-label addCheckLabel" for="addAnother">Want to add another item?</label>
       </div>
 
@@ -148,7 +148,8 @@
             })
             .then(() => {
               if (addNew) {
-                this.clearItem();
+                // this.clearItem();
+                this.$router.go();
               } else {
                 this.$router.push({
                   name: 'home',

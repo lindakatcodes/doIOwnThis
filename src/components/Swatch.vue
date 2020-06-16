@@ -40,6 +40,7 @@
     margin-top: 5%;
     margin-left: 2%;
     text-transform: capitalize;
+    overflow-wrap: break-word;
     color: var(--dark-font-color);
   }
 
