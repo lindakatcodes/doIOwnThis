@@ -3,7 +3,7 @@ module.exports = {
   module: {
     rules: [
       {
-        exclude: [/node_modules/, /dist/],
+        exclude: ['node_modules', 'dist'],
         loader: 'eslint-loader',
       },
     ],
