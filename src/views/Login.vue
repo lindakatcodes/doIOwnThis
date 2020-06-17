@@ -10,6 +10,7 @@
   export default {
     mounted() {
       ui.start('#auth-container', uiConfig);
+      ui.disableAutoSignIn();
 
       if (ui.isPendingRedirect()) {
         ui.start('#auth-container', uiConfig);
