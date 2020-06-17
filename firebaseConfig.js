@@ -4,8 +4,7 @@ import 'firebaseui/dist/firebaseui.css';
 import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/storage';
-// import 'firebase/analytics';
-// import 'firebase/performance';
+import 'firebase/performance';
 
 // firebase init goes here
 const config = {
@@ -24,6 +23,7 @@ const firebaseApp = firebase.initializeApp(config);
 export const db = firebaseApp.firestore();
 export const auth = firebaseApp.auth();
 export const storage = firebaseApp.storage();
+export const performance = firebaseApp.performance();
 export const timestamp = firebase.firestore.FieldValue.serverTimestamp();
 export const provider = new firebase.auth.GoogleAuthProvider();
 
