@@ -11,9 +11,8 @@ import 'normalize.css';
 import './assets/global.css';
 
 // Firebase
+// eslint-disable-next-line no-unused-vars
 import * as firebase from '../firebaseConfig';
-
-firebase.performance();
 
 Vue.config.productionTip = false;
 
@@ -71,3 +70,5 @@ new Vue({
   store,
   render: (h) => h(App),
 }).$mount('#app');
+
+// firebase.performance();
