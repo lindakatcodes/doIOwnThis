@@ -47,7 +47,7 @@ export const uiConfig = {
   },
   signInFlow: 'popup',
   signInSuccessUrl: 'https://doiownthis.netlify.app',
-  // queryParameterForSignInSuccessUrl: 'signInSuccessUrl',
+  queryParameterForSignInSuccessUrl: 'https://doiownthis.netlify.app',
   signInOptions: [
     {
       provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
