@@ -25,7 +25,7 @@ export const auth = firebaseApp.auth();
 export const storage = firebaseApp.storage();
 export const performance = firebaseApp.performance();
 export const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-export const provider = new firebase.auth.GoogleAuthProvider();
+// export const provider = new firebase.auth.GoogleAuthProvider();
 
 export const uiConfig = {
   callbacks: {
@@ -33,22 +33,32 @@ export const uiConfig = {
       // User successfully signed in.
       // Return type determines whether we continue the redirect automatically
       // or whether we leave that to developer to handle.
+      // console.log(authResult);
       return true;
     },
     signInFailure(error) {
       // For merge conflicts, the error.code will be
       // 'firebaseui/anonymous-upgrade-merge-conflict'.
       if (error.code !== 'firebaseui/anonymous-upgrade-merge-conflict') {
+        console.log('Cannot log in: ', error);
         return Promise.resolve();
       }
     },
   },
   signInFlow: 'popup',
-  signInSuccessUrl: '/',
-  queryParameterForSignInSuccessUrl: 'signInSuccessUrl',
+  signInSuccessUrl: 'https://doiownthis.netlify.app',
+  // queryParameterForSignInSuccessUrl: 'signInSuccessUrl',
   signInOptions: [
-    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+    {
+      provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      customParameters: {
+        // Forces account selection even when one account
+        // is available.
+        prompt: 'select_account',
+      },
+      // Required to enable ID token credentials for this provider.
+      clientId: process.env.VUE_APP_CLIENT_ID,
+    },
     firebase.auth.EmailAuthProvider.PROVIDER_ID,
   ],
 };
