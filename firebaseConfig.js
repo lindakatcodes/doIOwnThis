@@ -49,16 +49,16 @@ export const uiConfig = {
   signInSuccessUrl: 'https://doiownthis.netlify.app',
   queryParameterForSignInSuccessUrl: 'https://doiownthis.netlify.app',
   signInOptions: [
-    {
-      provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-      customParameters: {
-        // Forces account selection even when one account
-        // is available.
-        prompt: 'select_account',
-      },
-      // Required to enable ID token credentials for this provider.
-      clientId: process.env.VUE_APP_CLIENT_ID,
-    },
+    // {
+    //   provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+    //   customParameters: {
+    //     // Forces account selection even when one account
+    //     // is available.
+    //     prompt: 'select_account',
+    //   },
+    //   // Required to enable ID token credentials for this provider.
+    //   clientId: process.env.VUE_APP_CLIENT_ID,
+    // },
     firebase.auth.EmailAuthProvider.PROVIDER_ID,
   ],
 };
