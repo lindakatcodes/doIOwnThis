@@ -148,8 +148,11 @@
             })
             .then(() => {
               if (addNew) {
-                // this.clearItem();
-                this.$router.go();
+                this.clearItem();
+                this.$toasted.global.successToast({
+                  message: 'Good to add another polish!',
+                });
+                // this.$router.go();
               } else {
                 this.$router.push({
                   name: 'home',
