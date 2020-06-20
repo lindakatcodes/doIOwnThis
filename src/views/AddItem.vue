@@ -47,11 +47,10 @@
 
       <label class="form-label" for="pic">Pick a picture to show the color (recommended)</label>
       <input id="pic" type="file" accept="image/*, .jpg, .png, .jpeg" capture="environment" />
-      <!-- ToDo - on submit, redirect to home page w/ success message on success; show errors and stay on page if errors -->
-      <div class="newItemCheck">
+      <!-- <div class="newItemCheck">
         <input id="addAnother" class="addCheckbox" name="addNewItem" type="checkbox" autocomplete="off" />
         <label class="form-label addCheckLabel" for="addAnother">Want to add another item?</label>
-      </div>
+      </div> -->
 
       <button class="add-item-button" type="submit">Add Item</button>
     </form>
@@ -97,7 +96,7 @@
         // store a few things we'll need in variables
         // first, easy access to a file (if provided) & add new item check
         const file = formData[5].files[0];
-        const addNew = formData[6].checked;
+        // const addNew = formData[6].checked;
 
         // then, a handful of query selectors
         const brandSelector = document.querySelector('#brand');
@@ -147,17 +146,17 @@
               });
             })
             .then(() => {
-              if (addNew) {
-                this.clearItem();
-                this.$toasted.global.successToast({
-                  message: 'Good to add another polish!',
-                });
-                // this.$router.go();
-              } else {
-                this.$router.push({
-                  name: 'home',
-                });
-              }
+              // if (addNew) {
+              //   this.clearItem();
+              //   this.$toasted.global.successToast({
+              //     message: 'Good to add another polish!',
+              //   });
+              //   // this.$router.go();
+              // } else {
+              this.$router.push({
+                name: 'home',
+              });
+              // }
             })
             .catch(function (error) {
               this.$toasted.global.errorToast({
