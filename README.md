@@ -6,7 +6,7 @@ I built this site both for my future self (because I always forget which ones I 
 
 You can view the site live here: https://doiownthis.netlify.app/
 
-![Gif of site functionality](https://i.imgur.com/xR9u8dz.gif)
+![Gif of site functionality](https://i.imgur.com/yBpRXDK.gif "Do I Own This in action")
 
 If you notice anything strange or have any comments on things you'd like to see, please feel free to create an issue!
 
