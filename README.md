@@ -4,7 +4,9 @@ A personal inventory site for your nail polish! Easily view your collection from
 
 I built this site both for my future self (because I always forget which ones I already own when I'm at the store), and to practice learning Vue! As a bonus, I also dabbled with learning Firebase, specifically using their authentication, firestore database, and storage. 
 
-You can view the site live here: (https://doiownthis.netlify.app/)
+You can view the site live here: https://doiownthis.netlify.app/
+
+![Gif of site functionality](https://i.imgur.com/xR9u8dz.gif)
 
 If you notice anything strange or have any comments on things you'd like to see, please feel free to create an issue!
 
