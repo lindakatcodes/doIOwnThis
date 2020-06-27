@@ -5,6 +5,7 @@ import AddItem from '../views/AddItem.vue';
 import SwatchDetails from '../views/SwatchDetails.vue';
 import EditItem from '../views/EditItem.vue';
 import Login from '../views/Login.vue';
+import Stats from '../views/Stats.vue';
 
 Vue.use(VueRouter);
 
@@ -35,6 +36,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: Login,
+  },
+  {
+    path: '/stats',
+    name: 'stats',
+    component: Stats,
   },
 ];
 

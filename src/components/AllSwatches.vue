@@ -4,7 +4,10 @@
     <p v-else-if="filteredSwatches.length == 0 && !noFilterState" class="noResults">
       Sorry, it looks like there's no match for that search!
     </p>
-    <p v-else>Click on a swatch to see it's full details!</p>
+    <p v-else class="details">
+      Click on a swatch to see it's full details!<br />
+      <router-link :to="{ name: 'stats' }" class="route-link stats-link">Or view your collection's stats!</router-link>
+    </p>
     <div v-if="noFilterState">
       <div v-if="loading" class="loading">
         <img src="../assets/loading.svg" alt="Loading..." />
@@ -61,6 +64,19 @@
   p {
     margin-top: 5%;
     text-align: center;
+  }
+
+  .details br {
+    margin-bottom: 1.5%;
+  }
+
+  .stats-link {
+    margin-left: 0;
+    font-size: 0.9rem;
+  }
+
+  .stats-link:hover {
+    font-size: 0.925rem;
   }
 
   .loading {
