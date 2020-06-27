@@ -12,20 +12,20 @@
       </p>
     </div>
     <div v-else class="results-container">
-      <div class="results">
+      <div class="results total">
         <h3>TOTAL POLISHES:</h3>
         <p>{{ swatches.length }} Polishes</p>
       </div>
-      <h3>BRANDS:</h3>
-      <div class="results">
+      <div class="results brand">
+        <h3>BRANDS:</h3>
         <p v-for="(brand, index) in brands" :key="index">{{ brand.name }}: {{ brand.qty }}</p>
       </div>
-      <h3>COLOR GROUPS:</h3>
-      <div class="results">
+      <div class="results color">
+        <h3>COLOR GROUPS:</h3>
         <p v-for="(color, index) in colors" :key="index">{{ color.name }}: {{ color.qty }}</p>
       </div>
-      <h3>FINISHES:</h3>
-      <div class="results">
+      <div class="results finish">
+        <h3>FINISHES:</h3>
         <p v-for="(finish, index) in finishes" :key="index">{{ finish.name }}: {{ finish.qty }}</p>
       </div>
     </div>
@@ -129,10 +129,10 @@
   h2 {
     text-align: center;
     font-size: 2rem;
+    text-decoration: 4px underline var(--accent);
   }
 
   h3 {
-    text-decoration: 3px underline var(--accent);
     font-size: 1.1rem;
   }
 
@@ -143,11 +143,110 @@
   }
 
   .results {
-    margin-bottom: 4%;
-    border-bottom: 2px solid var(--dark-bg);
+    margin-bottom: 10%;
   }
 
   .results p {
     margin-left: 7%;
+  }
+
+  @media screen and (min-width: 450px) {
+    .results-container {
+      margin-left: 22%;
+    }
+  }
+
+  @media screen and (min-width: 600px) {
+    .results-container {
+      margin-left: 11%;
+      display: flex;
+      flex-wrap: wrap;
+      width: 80%;
+      justify-content: center;
+    }
+
+    .results {
+      width: 45%;
+      margin-bottom: 4%;
+      margin-left: 0;
+    }
+
+    .total {
+      width: 100%;
+      text-align: center;
+    }
+
+    .total h3 {
+      font-size: 1.3rem;
+    }
+
+    .total p {
+      margin-left: 3%;
+      font-size: 1.2rem;
+    }
+
+    .brand,
+    .color,
+    .finish {
+      padding-left: 5%;
+    }
+
+    .brand p,
+    .color p,
+    .finish p {
+      margin-left: 8%;
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .results-container {
+      margin-left: 9%;
+    }
+
+    .results p {
+      font-size: 1.2rem;
+    }
+
+    h3 {
+      font-size: 1.3rem;
+    }
+
+    .brand,
+    .color,
+    .finish {
+      padding-left: 2%;
+      width: 31%;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .results-container {
+      width: 90%;
+      margin-left: 6%;
+    }
+
+    h2 {
+      font-size: 2.5rem;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+    }
+
+    .results p {
+      font-size: 1.25rem;
+    }
+
+    .results {
+      margin-bottom: 2%;
+    }
+
+    .total h3 {
+      font-size: 1.5rem;
+    }
+
+    .total p {
+      font-size: 1.35rem;
+    }
   }
 </style>

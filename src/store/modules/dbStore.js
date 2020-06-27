@@ -125,6 +125,7 @@ export default {
           colorGroup: singleSwatch.colorGroup,
           finish: singleSwatch.finish,
           image: singleSwatch.image,
+          altText: `Image depiction of ${singleSwatch.name}`,
           storageUri: singleSwatch.storageUri,
           lastUpdated: timestamp,
           addedBy: rootState.currentUser.userId,

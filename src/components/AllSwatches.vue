@@ -129,6 +129,14 @@
       font-size: 1.2rem;
     }
 
+    .stats-link {
+      font-size: 1.1rem;
+    }
+
+    .stats-link:hover {
+      font-size: 1.125rem;
+    }
+
     .noResults {
       font-size: 1.3rem;
     }
@@ -147,10 +155,7 @@
       font-size: 1.325rem;
     }
   }
-  /* 
+
   @media screen and (min-width: 1000px) {
-    .allSwatches {
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    }
-  } */
+  }
 </style>

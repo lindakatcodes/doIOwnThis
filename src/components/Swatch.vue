@@ -1,7 +1,7 @@
 <template>
   <router-link class="link" :to="{ name: 'single-swatch', params: { id: swatch.id } }">
     <figure class="swatch">
-      <img :src="swatch.image" class="swatch-img" alt="Picture showing color of polish named in caption" />
+      <img :src="swatch.image" class="swatch-img" :alt="altText" />
       <figcaption class="swatch-name">{{ swatch.name }}</figcaption>
     </figure>
   </router-link>
@@ -12,6 +12,11 @@
     props: {
       // eslint-disable-next-line vue/require-default-prop
       swatch: Object,
+    },
+    data() {
+      return {
+        altText: `User chosen depiction of ${this.swatch.name}`,
+      };
     },
   };
 </script>
