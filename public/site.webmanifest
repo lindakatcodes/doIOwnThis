@@ -2,12 +2,12 @@
   "name": "Do I Own This",
   "icons": [
     {
-      "src": "./img/mobile-192.png",
+      "src": "./img/icons/mobile-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "./img/mobile-256.png",
+      "src": "./img/icons/mobile-256.png",
       "sizes": "256x256",
       "type": "image/png"
     }
