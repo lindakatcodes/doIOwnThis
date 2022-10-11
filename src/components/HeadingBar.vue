@@ -15,7 +15,7 @@
   export default {
     methods: {
       login() {
-        this.$auth.loginWithRedirect().then(() => {
+        this.$auth.loginWithPopup().then(() => {
           this.signedIn = true;
           this.$store.commit('SET_CURRENT_USER', this.$auth.user);
         });

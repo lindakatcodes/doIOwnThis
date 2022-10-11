@@ -19,6 +19,7 @@ export default new Vuex.Store({
       state.currentUser = {
         userName: val.name,
         userId: val.user_id,
+        fbUid: val.fb_uid,
       };
       state.signedIn = true;
     },
