@@ -4,66 +4,29 @@
       <router-link :to="{ name: 'home' }" class="title"><h1>Do I Own This?</h1></router-link>
       <p class="subtitle">Your collection in your pocket!</p>
     </div>
-    <div v-if="!signedIn" class="signInBlock">
-      <button class="toggleSignIn" type="button" @click="login">
-        SIGN IN / <br />
-        SIGN UP
-      </button>
-    </div>
-    <div v-if="signedIn" class="signOutBlock">
-      <p>Hi {{ getFirstName }}!</p>
-      <button class="toggleSignIn" type="button" @click="logout">
-        SIGN OUT
-      </button>
+    <div v-if="!$auth.loading" class="signInBlock">
+      <button v-if="!$auth.isAuthenticated" class="toggleSignIn" @click="login">Log in / Sign Up</button>
+      <button v-if="$auth.isAuthenticated" class="toggleSignIn" @click="logout">Log out</button>
     </div>
   </div>
 </template>
 
 <script>
-  import { auth } from '../../firebaseConfig';
-
   export default {
-    data() {
-      return {
-        userId: '',
-        name: '',
-        signedIn: false,
-      };
-    },
-    computed: {
-      getFirstName() {
-        const splitName = this.name.split(' ');
-        return splitName[0];
-      },
-    },
-    created() {
-      auth.onAuthStateChanged((user) => {
-        if (user) {
-          this.userId = user.uid;
-          this.name = user.displayName;
-          this.signedIn = true;
-          this.$store.commit('SET_CURRENT_USER', user);
-        } else {
-          this.signedIn = false;
-        }
-      });
-    },
     methods: {
       login() {
-        this.$router.push({
-          name: 'login',
+        this.$auth.loginWithRedirect().then(() => {
+          this.signedIn = true;
+          this.$store.commit('SET_CURRENT_USER', this.$auth.user);
         });
       },
       logout() {
-        auth
-          .signOut()
+        this.$auth
+          .logout({
+            returnTo: window.location.origin,
+          })
           .then(() => {
             this.$store.commit('UNSET_CURRENT_USER');
-          })
-          .catch(function (error) {
-            this.$toasted.global.errorToast({
-              message: `Trouble signing you out: ${error}`,
-            });
           });
       },
     },
