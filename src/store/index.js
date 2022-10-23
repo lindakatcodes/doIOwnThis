@@ -18,8 +18,8 @@ export default new Vuex.Store({
     SET_CURRENT_USER(state, val) {
       state.currentUser = {
         userName: val.name,
-        userId: val.user_id,
-        fbUid: val.fb_uid,
+        userId: val.sub,
+        fb_uid: val.fb_uid,
       };
       state.signedIn = true;
     },
@@ -29,5 +29,7 @@ export default new Vuex.Store({
     },
   },
   actions: {},
-  getters: {},
+  getters: {
+    getFbUid: (state) => state.currentUser.fb_uid,
+  },
 });

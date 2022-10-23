@@ -47,14 +47,15 @@ export default {
   },
   actions: {
     // get allSwatches
-    getAllSwatches({ state, commit, rootState }) {
+    getAllSwatches({ state, commit, rootState, rootGetters }) {
+      const userFbId = rootGetters.getFbUid || rootState.currentUser.fb_uid;
       if (state.allSwatches.length === 0) {
         commit('LOADING_STATE', true);
 
         const buildSwatches = [];
 
         db.collection('nailPolish')
-          .where('addedBy', '==', rootState.currentUser.userId)
+          .where('addedBy', '==', userFbId)
           .orderBy('lastUpdated', 'desc')
           .get()
           .then(function (querySnapshot) {
