@@ -12,10 +12,15 @@
 </template>
 
 <script>
+  import { getInstance } from '../auth';
+
   export default {
+    created() {
+      this.init(this.checkUserLoginStatus);
+    },
     methods: {
       login() {
-        this.$auth.loginWithPopup().then(() => {
+        this.$auth.loginWithRedirect().then(() => {
           this.signedIn = true;
           this.$store.commit('SET_CURRENT_USER', this.$auth.user);
         });
@@ -28,6 +33,21 @@
           .then(() => {
             this.$store.commit('UNSET_CURRENT_USER');
           });
+      },
+      init(fn) {
+        const instance = getInstance();
+        instance.$watch('loading', (loading) => {
+          if (loading === false) {
+            fn(instance);
+          }
+        });
+      },
+      async checkUserLoginStatus(instance) {
+        await instance.getTokenSilently().then((authToken) => {
+          if (authToken) {
+            this.$store.commit('SET_CURRENT_USER', this.$auth.user);
+          }
+        });
       },
     },
   };
