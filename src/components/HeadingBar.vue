@@ -21,7 +21,6 @@
     methods: {
       login() {
         this.$auth.loginWithRedirect().then(() => {
-          this.signedIn = true;
           this.$store.commit('SET_CURRENT_USER', this.$auth.user);
         });
       },

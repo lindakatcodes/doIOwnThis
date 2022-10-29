@@ -27,7 +27,6 @@
 </template>
 
 <script>
-  // import { mapState } from 'vuex';
   import FilterBar from '../components/FilterBar.vue';
   import AllSwatches from '../components/AllSwatches.vue';
 
