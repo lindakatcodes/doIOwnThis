@@ -29,7 +29,7 @@
 </template>
 
 <script>
-  import { mapState, mapActions } from 'vuex';
+  import { mapState, mapActions, mapGetters } from 'vuex';
   import Swatch from './Swatch.vue';
 
   export default {
@@ -43,13 +43,18 @@
         noFilterState: (state) => state.dbStore.noFilter,
         loading: (state) => state.dbStore.loading,
       }),
+      ...mapGetters({
+        userFbId: 'getFbUid',
+      }),
     },
-    mounted() {
-      this.getAllSwatches().catch((error) => {
-        this.$toasted.global.errorToast({
-          message: `Couldn't load swatches: ${error}`,
+    watch: {
+      userFbId() {
+        this.getAllSwatches().catch((error) => {
+          this.$toasted.global.errorToast({
+            message: `Couldn't load swatches: ${error}`,
+          });
         });
-      });
+      },
     },
     methods: {
       ...mapActions({

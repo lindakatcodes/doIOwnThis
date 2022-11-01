@@ -14,6 +14,17 @@ import './assets/global.css';
 // eslint-disable-next-line no-unused-vars
 import * as firebase from '../firebaseConfig';
 
+// Import the plugin here
+import { Auth0Plugin } from './auth';
+
+Vue.use(Auth0Plugin, {
+  domain: process.env.VUE_APP_AUTH_DOMAIN,
+  clientId: process.env.VUE_APP_AUTH_CLIENTID,
+  onRedirectCallback: (appState) => {
+    router.push(appState && appState.targetUrl ? appState.targetUrl : window.location.pathname);
+  },
+});
+
 Vue.config.productionTip = false;
 
 const toastOptions = {

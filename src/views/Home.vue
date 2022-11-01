@@ -2,7 +2,7 @@
   <transition name="slide-fade" mode="out-in">
     <div class="home">
       <FilterBar />
-      <div v-if="!signedIn" key="signed-out" class="intro">
+      <div v-if="!$auth.isAuthenticated" key="signed-out" class="intro">
         <h2>Welcome to the new home of your nail polish collection!</h2>
         <p>
           Ever run into this problem - you're out at the store, browsing polishes, as one does. You see a color you LOVE - and
@@ -27,7 +27,6 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
   import FilterBar from '../components/FilterBar.vue';
   import AllSwatches from '../components/AllSwatches.vue';
 
@@ -36,9 +35,6 @@
       FilterBar,
       AllSwatches,
     },
-    computed: mapState({
-      signedIn: (state) => state.signedIn,
-    }),
   };
 </script>
 
