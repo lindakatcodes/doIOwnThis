@@ -1,21 +1,10 @@
 module.exports = {
   extends: ['airbnb-base', 'plugin:vue/recommended', 'prettier', 'prettier/vue'],
-  parserOptions: {
-    parser: 'babel-eslint',
-    ecmaVersion: 2020,
-    ecmaFeatures: {
-      impliedStrict: true,
-      classes: true,
-    },
-    sourceType: 'module',
-  },
   env: {
     browser: true,
     commonjs: true,
     node: true,
-  },
-  settings: {
-    'import/resolver': 'webpack',
+    es2022: true,
   },
   ignorePatterns: ['dist/*'],
   rules: {

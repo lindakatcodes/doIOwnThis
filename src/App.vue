@@ -4,7 +4,7 @@
       <headingBar />
     </header>
 
-    <main v-if="!$auth.loading">
+    <main v-if="!$auth0.loading">
       <router-view :key="$route.fullPath" />
     </main>
   </div>

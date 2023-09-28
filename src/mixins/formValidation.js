@@ -1,4 +1,4 @@
-import { db, auth } from '../../firebaseConfig';
+import { db } from '../../firebaseConfig';
 
 export default {
   methods: {

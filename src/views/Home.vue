@@ -2,7 +2,7 @@
   <transition name="slide-fade" mode="out-in">
     <div class="home">
       <FilterBar />
-      <div v-if="!$auth.isAuthenticated" key="signed-out" class="intro">
+      <div v-if="!isAuthenticated" key="signed-out" class="intro">
         <h2>Welcome to the new home of your nail polish collection!</h2>
         <p>
           Ever run into this problem - you're out at the store, browsing polishes, as one does. You see a color you LOVE - and
@@ -31,6 +31,11 @@
   import AllSwatches from '../components/AllSwatches.vue';
 
   export default {
+    data() {
+    return {
+      isAuthenticated: this.$auth0.isAuthenticated,
+    };
+  },
     components: {
       FilterBar,
       AllSwatches,
@@ -46,7 +51,7 @@
     transition: all 0.8s cubic-bezier(0.61, 1.59, 0.74, 0.85);
   }
 
-  .slide-fade-enter,
+  .slide-fade-enter-from,
   .slide-fade-leave-to {
     transform: translateX(10px);
     opacity: 0;

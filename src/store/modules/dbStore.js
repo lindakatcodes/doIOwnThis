@@ -1,4 +1,4 @@
-import { db, timestamp } from '../../../firebaseConfig';
+import { db } from '../../../firebaseConfig';
 
 export default {
   namespaced: true,

@@ -1,7 +1,6 @@
-import Toasted from 'vue-toasted';
 
 // Vue & main files
-import Vue from 'vue';
+import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -10,30 +9,32 @@ import store from './store';
 import 'normalize.css';
 import './assets/global.css';
 
-// Firebase
+// Plugins and other libraries
 // eslint-disable-next-line no-unused-vars
-import * as firebase from '../firebaseConfig';
+// import * as firebase from "../firebaseConfig";
+// import { Auth0Plugin } from "./auth";
+import { createAuth0 } from '@auth0/auth0-vue';
+import Toasted from "vue-toasted";
 
-// Import the plugin here
-import { Auth0Plugin } from './auth';
+const app = createApp(App);
 
-Vue.use(Auth0Plugin, {
-  domain: process.env.VUE_APP_AUTH_DOMAIN,
-  clientId: process.env.VUE_APP_AUTH_CLIENTID,
-  onRedirectCallback: (appState) => {
-    router.push(appState && appState.targetUrl ? appState.targetUrl : window.location.pathname);
-  },
-});
-
-Vue.config.productionTip = false;
+app.use(
+  createAuth0({
+    domain: import.meta.env.VUE_APP_AUTH_DOMAIN,
+    clientId: import.meta.env.VUE_APP_AUTH_CLIENTID,
+    authorizationParams: {
+      redirect_uri: window.location.origin,
+    },
+  })
+);
 
 const toastOptions = {
-  position: 'bottom-center',
+  position: "bottom-center",
   duration: 2000,
-  iconPack: 'material',
+  iconPack: "material",
   action: {
-    icon: 'close',
-    class: 'closeToast',
+    icon: "close",
+    class: "closeToast",
     onClick: (e, toastObject) => {
       toastObject.goAway(250);
     },
@@ -41,22 +42,22 @@ const toastOptions = {
 };
 
 const successOptions = {
-  type: 'success',
-  icon: 'check_circle_outline',
+  type: "success",
+  icon: "check_circle_outline",
 };
 
 const errorOptions = {
-  type: 'error',
-  icon: 'error_outline',
+  type: "error",
+  icon: "error_outline",
 };
 
-Vue.use(Toasted, toastOptions, router);
+app.use(Toasted, toastOptions, router);
 
-Vue.toasted.register(
-  'errorToast',
+app.toasted.register(
+  "errorToast",
   (payload) => {
     if (!payload.message) {
-      return 'Sorry, something went wrong!';
+      return "Sorry, something went wrong!";
     }
 
     return `Sorry! ${payload.message}`;
@@ -64,11 +65,11 @@ Vue.toasted.register(
   errorOptions
 );
 
-Vue.toasted.register(
-  'successToast',
+app.toasted.register(
+  "successToast",
   (payload) => {
     if (!payload.message) {
-      return 'Success!';
+      return "Success!";
     }
 
     return `Hurray! ${payload.message}`;
@@ -76,10 +77,7 @@ Vue.toasted.register(
   successOptions
 );
 
-new Vue({
-  router,
-  store,
-  render: (h) => h(App),
-}).$mount('#app');
+app.use(router);
+app.use(store);
 
-// firebase.performance();
+app.mount("#app");
