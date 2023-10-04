@@ -71,6 +71,7 @@
           image: '',
           storageUri: '',
           id: '',
+          addedBy: '',
         },
         errors: [],
       };
@@ -93,6 +94,7 @@
       this.singleSwatch.image = data.image;
       this.singleSwatch.storageUri = data.storageUri;
       this.singleSwatch.id = data.id || this.$attrs.id;
+      this.singleSwatch.addedBy = data.addedBy;
     },
     methods: {
       ...mapActions({

@@ -1,4 +1,4 @@
-import { db, auth } from '../../firebaseConfig';
+import { db } from '../../firebaseConfig';
 
 export default {
   methods: {
@@ -10,7 +10,7 @@ export default {
       }
       return false;
     },
-    async checkSwatchExists(brand, name) {
+    async checkSwatchExists(brand, name, addedBy) {
       const nameQuery = [];
       const capitalName = await this.titleCase(name);
       let foundMatch = false;
@@ -18,7 +18,7 @@ export default {
       // run a query that checks to see if any variation of the polish name shows up, & return those results
       await db
         .collection('nailPolish')
-        .where('addedBy', '==', auth.currentUser.uid)
+        .where('addedBy', '==', addedBy)
         .where('name', '==', capitalName)
         .get()
         .then(function (querySnapshot) {
@@ -51,7 +51,7 @@ export default {
     async validateForm(data, photoFile, errors, selectors, type) {
       let formIsValid = false;
       // first, check if an item w/ same brand & name already exists - prevent duplicates
-      const docExists = await this.checkSwatchExists(data.brand, data.name);
+      const docExists = await this.checkSwatchExists(data.brand, data.name, data.addedBy);
 
       // then, if we have a photo file, make sure it's in our size & file type ranges
       let validPhoto = '';
