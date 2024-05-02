@@ -55,5 +55,8 @@
       "vue-cli-service lint",
       "git add"
     ]
+  },
+  "volta": {
+    "node": "14.16.1"
   }
 }
